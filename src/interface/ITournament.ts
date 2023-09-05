@@ -11,7 +11,8 @@ export default interface ITournament {
   start_date?: Date;
   end_date?: Date;
   description?: string;
-  teams?: Types.ObjectId[];
-  organizer_id?: Types.ObjectId;
-  sponsors?: ISponsor[];
+  teams: Types.ObjectId[];
+  organizer_id: Types.ObjectId;
+  sponsors: ISponsor[];
+  //   timelines?:
 }

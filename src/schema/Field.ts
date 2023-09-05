@@ -16,6 +16,10 @@ const FieldSchema = new Schema<IField>(
     is_being_used: {
       type: Boolean,
     },
+    footballshop_id: {
+      type: Schema.Types.ObjectId,
+      ref: SCHEMA.FOOTBALL_SHOPS,
+    },
   },
   {
     timestamps: true,

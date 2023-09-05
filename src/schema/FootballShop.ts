@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { SCHEMA } from "./schema-name";
-import IFootballShop from "../interface/IFootballShop";
+import IFootballShop, { EFootballShopStatus } from "../interface/IFootballShop";
 
 const FootballShopSchema = new Schema<IFootballShop>(
   {
@@ -31,6 +31,12 @@ const FootballShopSchema = new Schema<IFootballShop>(
     },
     status: {
       type: String,
+    },
+    active_at: {
+      type: Number,
+    },
+    inactive_at: {
+      type: Number,
     },
   },
   {

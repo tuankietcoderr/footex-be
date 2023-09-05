@@ -14,6 +14,12 @@ const FieldBookedQueueSchema = new Schema<IFieldBookedQueue>({
   booked_time: {
     type: Date,
   },
+  time_count: {
+    type: Number,
+  },
+  status: {
+    type: String,
+  },
 });
 
 export default model<IFieldBookedQueue>(

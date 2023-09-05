@@ -18,4 +18,6 @@ export default interface IFootballShop {
   owner_id?: Types.ObjectId;
   description?: string;
   status?: EFootballShopStatus;
+  active_at: number;
+  inactive_at: number;
 }

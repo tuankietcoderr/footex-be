@@ -9,13 +9,38 @@ const toId = Types.ObjectId;
 
 router.post("/", verifyToken, async (req: Request, res: Response) => {
   try {
-    const { name, description, address, phone_number, email } =
-      req.body as IFootballShop;
-    if (!name || !description || !address || !phone_number || !email) {
+    const {
+      name,
+      description,
+      address,
+      phone_number,
+      email,
+      active_at,
+      inactive_at,
+    } = req.body as IFootballShop;
+    if (
+      !name ||
+      !description ||
+      !address ||
+      !phone_number ||
+      !email ||
+      !active_at ||
+      !inactive_at
+    ) {
       return res
         .status(400)
         .json({ success: false, message: "Please enter all fields" });
     }
+
+    if (active_at >= inactive_at) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Active time must be before inactive time",
+        });
+    }
+
     const newFootballShop = new FootballShop({
       ...req.body,
       owner_id: new toId(req.user_id),
