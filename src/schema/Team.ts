@@ -1,35 +1,35 @@
-import { Schema, model } from "mongoose";
-import { SCHEMA } from "./schema-name";
-import ITeam from "../interface/ITeam";
+import { Schema, model } from 'mongoose'
+import { SCHEMA } from './schema-name'
+import ITeam from '../interface/ITeam'
 
 const TeamSchema = new Schema<ITeam>(
   {
     description: {
-      type: String,
+      type: String
     },
     images: {
-      type: [String],
+      type: [String]
     },
     logo: {
-      type: String,
+      type: String
     },
     members: [
       {
         type: Schema.Types.ObjectId,
-        ref: SCHEMA.USERS,
-      },
+        ref: SCHEMA.USERS
+      }
     ],
     name: {
-      type: String,
+      type: String
     },
     owner_id: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.USERS,
-    },
+      ref: SCHEMA.USERS
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-export default model<ITeam>(SCHEMA.TEAMS, TeamSchema);
+export default model<ITeam>(SCHEMA.TEAMS, TeamSchema)

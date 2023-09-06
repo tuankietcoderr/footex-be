@@ -1,28 +1,25 @@
-import { Schema, Types, model } from "mongoose";
-import { SCHEMA } from "./schema-name";
-import IFieldBookedQueue from "../interface/IFieldBookedQueue";
+import { Schema, Types, model } from 'mongoose'
+import { SCHEMA } from './schema-name'
+import IFieldBookedQueue from '../interface/IFieldBookedQueue'
 
 const FieldBookedQueueSchema = new Schema<IFieldBookedQueue>({
   booked_by: {
     type: Schema.Types.ObjectId,
-    ref: SCHEMA.USERS,
+    ref: SCHEMA.USERS
   },
   field_id: {
     type: Schema.Types.ObjectId,
-    ref: SCHEMA.FIELDS,
+    ref: SCHEMA.FIELDS
   },
   booked_time: {
-    type: Date,
+    type: Date
   },
   time_count: {
-    type: Number,
+    type: Number
   },
   status: {
-    type: String,
-  },
-});
+    type: String
+  }
+})
 
-export default model<IFieldBookedQueue>(
-  SCHEMA.FIELD_BOOKED_QUEUES,
-  FieldBookedQueueSchema
-);
+export default model<IFieldBookedQueue>(SCHEMA.FIELD_BOOKED_QUEUES, FieldBookedQueueSchema)

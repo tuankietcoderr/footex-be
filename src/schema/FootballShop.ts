@@ -1,47 +1,47 @@
-import { Schema, model } from "mongoose";
-import { SCHEMA } from "./schema-name";
-import IFootballShop, { EFootballShopStatus } from "../interface/IFootballShop";
+import { Schema, model } from 'mongoose'
+import { SCHEMA } from './schema-name'
+import IFootballShop, { EFootballShopStatus } from '../interface/IFootballShop'
 
 const FootballShopSchema = new Schema<IFootballShop>(
   {
     email: {
-      type: String,
+      type: String
     },
     images: {
-      type: [String],
+      type: [String]
     },
     logo: {
-      type: String,
+      type: String
     },
     name: {
-      type: String,
+      type: String
     },
     address: {
-      type: String,
+      type: String
     },
     phone_number: {
-      type: String,
+      type: String
     },
     owner_id: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.USERS,
+      ref: SCHEMA.USERS
     },
     description: {
-      type: String,
+      type: String
     },
     status: {
-      type: String,
+      type: String
     },
     active_at: {
-      type: Number,
+      type: Number
     },
     inactive_at: {
-      type: Number,
-    },
+      type: Number
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-export default model<IFootballShop>(SCHEMA.FOOTBALL_SHOPS, FootballShopSchema);
+export default model<IFootballShop>(SCHEMA.FOOTBALL_SHOPS, FootballShopSchema)

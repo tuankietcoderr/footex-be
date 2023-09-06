@@ -1,41 +1,41 @@
-import { Schema, model } from "mongoose";
-import { SCHEMA } from "./schema-name";
-import IUser from "../interface/IUser";
+import { Schema, model } from 'mongoose'
+import { SCHEMA } from './schema-name'
+import IUser from '../interface/IUser'
 
 const UserSchema = new Schema<IUser>(
   {
     username: {
       type: String,
-      unique: true,
+      unique: true
     },
     password: {
-      type: String,
+      type: String
     },
     role: {
-      type: String,
+      type: String
     },
     email: {
-      type: String,
+      type: String
     },
     avatar: {
-      type: String,
+      type: String
     },
     name: {
-      type: String,
+      type: String
     },
     phone_number: {
-      type: String,
+      type: String
     },
     teams: [
       {
         type: Schema.Types.ObjectId,
-        ref: SCHEMA.TEAMS,
-      },
-    ],
+        ref: SCHEMA.TEAMS
+      }
+    ]
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-export default model<IUser>(SCHEMA.USERS, UserSchema);
+export default model<IUser>(SCHEMA.USERS, UserSchema)

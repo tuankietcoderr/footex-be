@@ -1,43 +1,43 @@
-import { Schema, model } from "mongoose";
-import { SCHEMA } from "./schema-name";
-import ITournament from "../interface/ITournament";
+import { Schema, model } from 'mongoose'
+import { SCHEMA } from './schema-name'
+import ITournament from '../interface/ITournament'
 
 const TournamentSchema = new Schema<ITournament>(
   {
     description: {
-      type: String,
+      type: String
     },
     images: {
-      type: [String],
+      type: [String]
     },
     end_date: {
-      type: Date,
+      type: Date
     },
     start_date: {
-      type: Date,
+      type: Date
     },
     name: {
-      type: String,
+      type: String
     },
     organizer_id: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.FOOTBALL_SHOPS,
+      ref: SCHEMA.FOOTBALL_SHOPS
     },
     sponsors: [
       {
-        type: Object,
-      },
+        type: Object
+      }
     ],
     teams: [
       {
         type: Schema.Types.ObjectId,
-        ref: SCHEMA.TEAMS,
-      },
-    ],
+        ref: SCHEMA.TEAMS
+      }
+    ]
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-export default model<ITournament>(SCHEMA.TOURNAMENTS, TournamentSchema);
+export default model<ITournament>(SCHEMA.TOURNAMENTS, TournamentSchema)

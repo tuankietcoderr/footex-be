@@ -1,29 +1,29 @@
-import { Schema, model } from "mongoose";
-import { SCHEMA } from "./schema-name";
-import IField from "../interface/IField";
+import { Schema, model } from 'mongoose'
+import { SCHEMA } from './schema-name'
+import IField from '../interface/IField'
 
 const FieldSchema = new Schema<IField>(
   {
     name: {
-      type: String,
+      type: String
     },
     price: {
-      type: Number,
+      type: Number
     },
     description: {
-      type: String,
+      type: String
     },
     is_being_used: {
-      type: Boolean,
+      type: Boolean
     },
     footballshop_id: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.FOOTBALL_SHOPS,
-    },
+      ref: SCHEMA.FOOTBALL_SHOPS
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-export default model<IField>(SCHEMA.FIELDS, FieldSchema);
+export default model<IField>(SCHEMA.FIELDS, FieldSchema)
