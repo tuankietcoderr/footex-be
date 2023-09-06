@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose'
-import { SCHEMA } from './schema-name'
-import IField from '../interface/IField'
+import { Schema, model } from "mongoose"
+import { SCHEMA } from "./schema-name"
+import IField from "../interface/IField"
 
 const FieldSchema = new Schema<IField>(
   {

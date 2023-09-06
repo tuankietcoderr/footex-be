@@ -1,11 +1,9 @@
-import { Types } from 'mongoose'
+import { Types } from "mongoose"
 
 export enum EFootballShopStatus {
-  OPEN = 'OPEN',
-  CLOSE = 'CLOSE',
-  PENDING = 'PENDING',
-  REJECTED = 'REJECTED',
-  MAINTAINING = 'MAINTAINING'
+  PENDING = "PENDING",
+  REJECTED = "REJECTED",
+  MAINTAINING = "MAINTAINING"
 }
 
 export default interface IFootballShop {

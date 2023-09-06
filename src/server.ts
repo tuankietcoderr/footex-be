@@ -1,7 +1,7 @@
-import express from 'express'
-import { config, run } from './utils/config'
-import { connectDB } from './utils/db'
-import getRoutes from './routes'
+import express from "express"
+import { config, run } from "./utils/config"
+import { connectDB } from "./utils/db"
+import getRoutes from "./routes"
 
 const app = config(express)
 

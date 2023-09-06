@@ -1,9 +1,9 @@
-import { Types } from 'mongoose'
+import { Types } from "mongoose"
 
 export enum EBOOKED_QUEUE_STATUS {
-  PENDING = 'PENDING',
-  CANCELLED = 'CANCELLED',
-  ACCEPTED = 'ACCEPTED'
+  PENDING = "PENDING",
+  CANCELLED = "CANCELLED",
+  ACCEPTED = "ACCEPTED"
 }
 export default interface IFieldBookedQueue {
   field_id?: Types.ObjectId

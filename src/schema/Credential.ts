@@ -1,6 +1,6 @@
-import { Schema, Types, model } from 'mongoose'
-import { SCHEMA } from './schema-name'
-import ICredential from '../interface/ICredential'
+import { Schema, Types, model } from "mongoose"
+import { SCHEMA } from "./schema-name"
+import ICredential from "../interface/ICredential"
 
 const CredentialSchema = new Schema<ICredential>({
   userId: {

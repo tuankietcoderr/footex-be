@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose'
-import { SCHEMA } from './schema-name'
-import IFootballShop, { EFootballShopStatus } from '../interface/IFootballShop'
+import { Schema, model } from "mongoose"
+import { SCHEMA } from "./schema-name"
+import IFootballShop, { EFootballShopStatus } from "../interface/IFootballShop"
 
 const FootballShopSchema = new Schema<IFootballShop>(
   {

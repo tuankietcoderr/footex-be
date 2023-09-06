@@ -1,6 +1,6 @@
-import { Schema, Types, model } from 'mongoose'
-import { SCHEMA } from './schema-name'
-import IFieldBookedQueue from '../interface/IFieldBookedQueue'
+import { Schema, Types, model } from "mongoose"
+import { SCHEMA } from "./schema-name"
+import IFieldBookedQueue from "../interface/IFieldBookedQueue"
 
 const FieldBookedQueueSchema = new Schema<IFieldBookedQueue>({
   booked_by: {

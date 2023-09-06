@@ -1,9 +1,9 @@
-import { Types } from 'mongoose'
+import { Types } from "mongoose"
 
 export enum EInvitementStatus {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED'
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED"
 }
 
 export default interface IInvitement {

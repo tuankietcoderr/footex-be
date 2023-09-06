@@ -1,5 +1,5 @@
-import { Types } from 'mongoose'
-import IUser from './IUser'
+import { Types } from "mongoose"
+import IUser from "./IUser"
 
 export default interface ITeam {
   name: string

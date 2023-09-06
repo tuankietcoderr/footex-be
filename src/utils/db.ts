@@ -1,17 +1,13 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose"
 
 const connectDB = async () => {
-  const isProduction = process.env.NODE_ENV === 'production'
   try {
-    await mongoose.connect(
-      isProduction ? (process.env.MONGODB_URI_PROD as string) : (process.env.MONGODB_URI_DEV as string),
-      {
-        autoIndex: true
-      }
-    )
-    console.log('MongoDB Connected...')
+    await mongoose.connect(process.env.MONGODB_URI!, {
+      autoIndex: true
+    })
+    console.log("MongoDB Connected...")
   } catch (err: any) {
-    console.error(err.message)
+    console.error("DB ERR", err.message)
     process.exit(1)
   }
 }

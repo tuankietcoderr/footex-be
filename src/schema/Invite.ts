@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose'
-import IInvitement from '../interface/IInvitement'
-import { SCHEMA } from './schema-name'
+import { Schema, model } from "mongoose"
+import IInvitement from "../interface/IInvitement"
+import { SCHEMA } from "./schema-name"
 
 const InviteSchema = new Schema<IInvitement>(
   {
