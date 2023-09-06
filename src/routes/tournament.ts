@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import ITournament from "../interface/ITournament";
 import Tournament from "../schema/Tournament";
 import Team from "../schema/Team";
+import User from "../schema/User";
 
 const router = Router();
 const toId = Types.ObjectId;
@@ -77,6 +78,24 @@ router.post(
 router.get("/", async (req: Request, res: Response) => {
   try {
     const tournaments = await Tournament.find();
+    res.status(200).json({ success: true, data: tournaments });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.get("/guest", verifyToken, async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.user_id).select("teams");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const ownTeams = await Team.find({ owner_id: user._id }).select("_id");
+    const teams = [
+      ...user.teams.map((t) => t._id),
+      ...ownTeams.map((t) => t._id),
+    ];
+    const tournaments = await Tournament.find({
+      teams: { $in: teams },
+    });
     res.status(200).json({ success: true, data: tournaments });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
