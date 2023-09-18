@@ -6,6 +6,7 @@ import User from "../schema/User"
 import Credential from "../schema/Credential"
 import IUser, { EUserRole } from "../interface/IUser"
 import bcrypt from "bcryptjs"
+import { sendMail } from "../service/mailer"
 
 const router = express.Router()
 const toId = Types.ObjectId
@@ -110,6 +111,83 @@ router.post("/signin", async (req, res) => {
     })
   } catch (error) {
     res.status(500).json({ success: false, message: error })
+  }
+})
+
+router.post("/send-email", async (req, res) => {
+  try {
+    const { email } = req.query
+    const hashedEmail = await bcrypt.hash(email as string, 10)
+    sendMail({
+      to: email as string,
+      subject: "Xác thực email của bạn tại Footex",
+      text: `Chào bạn,\n\nBạn vui lòng xác thực email của mình bằng cách nhấn vào đường dẫn sau: \n\n${process.env.URL}/verify-email?email=${email}&token=${hashedEmail}\n\nTrân trọng,\nHỏi đáp Dịch vụ công`
+    })
+    res.status(200).json({ success: true, message: "Đã gửi email" })
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" })
+  }
+})
+
+router.get("/verify-email", async (req, res) => {
+  try {
+    const { email, token } = req.query
+    const isMatch = await bcrypt.compare(email as string, token as string)
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Không thể xác thực email, có lỗi xảy ra"
+      })
+    }
+
+    const user = await User.findOne({ email })
+    if (!user) {
+      return res.status(400).json({ success: false, message: "Người dùng không tồn tại" })
+    }
+
+    user.is_email_verified = true
+    await user.save()
+
+    res.render("email-verified", { email })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message })
+  }
+})
+
+router.get("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.query
+
+    const randomPassword = Math.random().toString(36).slice(-8)
+
+    const hashedPassword = await bcrypt.hash(randomPassword, 10)
+
+    const user = await User.findOne({ email })
+    if (!user) {
+      return res.status(400).json({ success: false, message: "Người dùng không tồn tại" })
+    }
+
+    if (!user.is_email_verified) {
+      return res.status(400).json({ success: false, message: "Email chưa được xác thực" })
+    }
+
+    const credential = await Credential.findOne({ userId: user._id })
+    if (!credential) {
+      return res.status(400).json({ success: false, message: "Người dùng không tồn tại" })
+    }
+
+    credential.password = hashedPassword
+
+    await credential.save()
+
+    sendMail({
+      to: email as string,
+      subject: "Đặt lại mật khẩu của bạn tại Hỏi đáp Dịch vụ công",
+      text: `Chào bạn,\n\nĐây là mật khẩu được đặt lại của bạn: ${randomPassword}. Hãy sử dụng mật khẩu nãy để đăng nhập bạn nhé!\nBạn cũng có thể thay đổi lại mật khẩu sau trong phần cài đặt người dùng.\n\nTrân trọng,\nHỏi đáp Dịch vụ công`
+    })
+    res.status(200).json({ success: true, message: "Đã gửi email" })
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" })
   }
 })
 

@@ -31,7 +31,11 @@ const UserSchema = new Schema<IUser>(
         type: Schema.Types.ObjectId,
         ref: SCHEMA.TEAMS
       }
-    ]
+    ],
+    is_email_verified: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true

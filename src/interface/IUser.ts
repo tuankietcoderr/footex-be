@@ -15,4 +15,5 @@ export default interface IUser {
   avatar?: string
   phone_number?: string
   teams: Types.ObjectId[]
+  is_email_verified?: boolean
 }
