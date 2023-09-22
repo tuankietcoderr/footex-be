@@ -1,4 +1,6 @@
 import { Types } from "mongoose"
+import IField from "./IField"
+import IUser from "./IUser"
 
 export enum EBOOKED_QUEUE_STATUS {
   PENDING = "PENDING",
@@ -6,9 +8,9 @@ export enum EBOOKED_QUEUE_STATUS {
   ACCEPTED = "ACCEPTED"
 }
 export default interface IFieldBookedQueue {
-  field_id?: Types.ObjectId
+  field?: Types.ObjectId | IField
   booked_time?: Date
-  booked_by?: Types.ObjectId
+  booked_by?: Types.ObjectId | IUser
   time_count?: number
   status?: EBOOKED_QUEUE_STATUS
 }

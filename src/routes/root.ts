@@ -10,12 +10,4 @@ router.get("/", (req, res) => {
   })
 })
 
-router.get("/page", (req, res) => {
-  res.render("page", {
-    subject: "EJS template engine",
-    name: "our template",
-    link: "https://google.com"
-  })
-})
-
 export default router

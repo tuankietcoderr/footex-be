@@ -22,7 +22,7 @@ const TeamSchema = new Schema<ITeam>(
     name: {
       type: String
     },
-    owner_id: {
+    owner: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.USERS
     }

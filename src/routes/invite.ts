@@ -12,24 +12,24 @@ const toId = Types.ObjectId
 
 router.post("/", verifyToken, async (req: Request, res: Response) => {
   try {
-    const { team_id, user_id } = req.body as IInvitement
-    const team = await Team.findById(team_id).populate("owner_id")
+    const { team: team_id, user } = req.body as IInvitement
+    const team = await Team.findById(team_id).populate("owner")
     if (!team) return res.status(404).json({ message: "Team not found" })
 
-    const currInvite = await Invite.findOne({ team_id, user_id })
+    const currInvite = await Invite.findOne({ team: team_id, user })
 
     if (currInvite) {
       return res.status(400).json({ message: "Invite already sent" })
     }
 
-    const user = await User.findById(user_id)
-    if (!user) return res.status(404).json({ message: "User not found" })
+    const _user = await User.findById(user)
+    if (!_user) return res.status(404).json({ message: "User not found" })
 
     const invite = await Invite.create({
-      team_id,
-      user_id,
-      title: (team.owner_id as IUser).name + " invited you to join " + team.name,
-      owner_title: "You invite " + user.name + " to join " + team.name + " team",
+      team: team_id,
+      user,
+      title: (team.owner as IUser).name + " invited you to join " + team.name,
+      owner_title: "You invite " + _user.name + " to join " + team.name + " team",
       status: EInvitementStatus.PENDING
     })
     res.status(200).json({ success: true, data: invite })
@@ -45,10 +45,10 @@ router.put("/status/:invite_id", verifyToken, async (req: Request, res: Response
     const invite = await Invite.findById(invite_id)
     if (!invite) return res.status(404).json({ message: "Invite not found" })
 
-    const team = await Team.findById(invite.team_id)
+    const team = await Team.findById(invite.team)
     if (!team) return res.status(404).json({ message: "Team not found" })
 
-    const user = await User.findById(invite.user_id)
+    const user = await User.findById(invite.user)
     if (!user) return res.status(404).json({ message: "User not found" })
 
     const user_id = new toId(req.user_id)
@@ -83,9 +83,9 @@ router.put("/status/:invite_id", verifyToken, async (req: Request, res: Response
 
 router.get("/owner", verifyToken, async (req: Request, res: Response) => {
   try {
-    const teams = await Team.find({ owner_id: req.user_id })
+    const teams = await Team.find({ owner: req.user_id })
     const invites = await Invite.find({
-      team_id: {
+      team: {
         $in: teams.map((team) => team._id)
       }
     })
@@ -97,7 +97,7 @@ router.get("/owner", verifyToken, async (req: Request, res: Response) => {
 
 router.get("/member", verifyToken, async (req: Request, res: Response) => {
   try {
-    const invites = await Invite.find({ user_id: req.user_id })
+    const invites = await Invite.find({ user: req.user_id })
     res.status(200).json({ success: true, data: invites })
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message })

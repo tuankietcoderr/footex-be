@@ -10,11 +10,11 @@ const InviteSchema = new Schema<IInvitement>(
     status: {
       type: String
     },
-    team_id: {
+    team: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.TEAMS
     },
-    user_id: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.USERS
     },

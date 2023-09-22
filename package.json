@@ -5,9 +5,9 @@
   "main": "./dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "yarn build && yarn serve",
+    "start": "npm run build && npm run serve",
     "serve": "node -r dotenv/config dist/server.js",
-    "build": "yarn clean && yarn build-ts",
+    "build": "npm run clean && npm run build-ts",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q ./dist/server.js\"",
     "build-ts": "tsc",
     "clean": "rimraf ./dist",

@@ -35,14 +35,14 @@ router.post("/", verifyToken, async (req: Request, res: Response) => {
 router.post("/join/:tournament_id", verifyToken, async (req: Request, res: Response) => {
   try {
     const { tournament_id } = req.params
-    const { team_id } = req.body
+    const { team: team_id } = req.body
     if (!tournament_id || !team_id) {
       return res.status(400).json({ success: false, message: "Please enter all fields" })
     }
     const team = await Team.findById(team_id)
     if (!team) return res.status(404).json({ message: "Team not found" })
 
-    if (team.owner_id.toString() !== req.user_id) {
+    if (team.owner.toString() !== req.user_id) {
       return res.status(401).json({
         message: "You must be the owner of this team to join this tournament"
       })
@@ -75,7 +75,7 @@ router.get("/guest", verifyToken, async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.user_id).select("teams")
     if (!user) return res.status(404).json({ message: "User not found" })
-    const ownTeams = await Team.find({ owner_id: user._id }).select("_id")
+    const ownTeams = await Team.find({ owner: user._id }).select("_id")
     const teams = [...user.teams.map((t) => t._id), ...ownTeams.map((t) => t._id)]
     const tournaments = await Tournament.find({
       teams: { $in: teams }
@@ -130,7 +130,7 @@ router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
     const tournament = await Tournament.findById(id)
     if (!tournament) return res.status(404).json({ message: "Tournament not found" })
 
-    if (tournament.organizer_id.toString() !== req.user_id) {
+    if (tournament.organizer.toString() !== req.user_id) {
       return res.status(401).json({
         message: "You must be the organizer of this tournament to delete it"
       })

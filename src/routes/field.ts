@@ -3,8 +3,8 @@ import verifyToken from "../middleware/auth"
 import { Types } from "mongoose"
 import IField from "../interface/IField"
 import Field from "../schema/Field"
-import FootballShop from "../schema/FootballShop"
-import IFootballShop, { EFootballShopStatus } from "../interface/IFootballShop"
+import Organization from "../schema/Organization"
+import IOrganization, { EOrganizationStatus } from "../interface/IOrganization"
 import IFieldBookedQueue, { EBOOKED_QUEUE_STATUS } from "../interface/IFieldBookedQueue"
 import User from "../schema/User"
 import FieldBookedQueue from "../schema/FieldBookedQueue"
@@ -14,18 +14,18 @@ const toId = Types.ObjectId
 
 router.post("/", verifyToken, async (req: Request, res: Response) => {
   try {
-    const { name, description, footballshop_id, price } = req.body as IField
-    if (!name || !description || !footballshop_id || !price) {
+    const { name, description, organization, price } = req.body as IField
+    if (!name || !description || !organization || !price) {
       return res.status(400).json({ success: false, message: "Please enter all fields" })
     }
 
-    const footballshop = await FootballShop.findById(footballshop_id)
-    if (!footballshop) return res.status(404).json({ message: "FootballShop not found" })
-    if (footballshop.status === EFootballShopStatus.PENDING || footballshop.status === EFootballShopStatus.REJECTED)
-      return res.status(400).json({ message: "FootballShop is not approved yet" })
+    const _organization = await Organization.findById(organization)
+    if (!_organization) return res.status(404).json({ message: "Organization not found" })
+    if (_organization.status === EOrganizationStatus.PENDING || _organization.status === EOrganizationStatus.REJECTED)
+      return res.status(400).json({ message: "Organization is not approved yet" })
     const newField = new Field({
       ...req.body,
-      footballshop_id: footballshop._id,
+      organization: _organization._id,
       is_being_used: false
     })
     await newField.save()
@@ -37,8 +37,8 @@ router.post("/", verifyToken, async (req: Request, res: Response) => {
 
 router.post("/book", verifyToken, async (req: Request, res: Response) => {
   try {
-    const { booked_time, field_id, time_count } = req.body as IFieldBookedQueue
-    if (!booked_time || !field_id || !time_count) {
+    const { booked_time, field, time_count } = req.body as IFieldBookedQueue
+    if (!booked_time || !field || !time_count) {
       return res.status(400).json({ success: false, message: "Please enter all fields" })
     }
     if (time_count < 1 || time_count > 2) {
@@ -52,16 +52,16 @@ router.post("/book", verifyToken, async (req: Request, res: Response) => {
     }
     const user = await User.findById(req.user_id)
     if (!user) return res.status(404).json({ message: "User not found" })
-    const field = await Field.findById(field_id).populate("footballshop_id")
-    if (!field) return res.status(404).json({ message: "Field not found" })
-    const footballshop = field.footballshop_id as IFootballShop
+    const _field = await Field.findById(field).populate("organization")
+    if (!_field) return res.status(404).json({ message: "Field not found" })
+    const organization = _field.organization as IOrganization
     const bookTime = new Date(booked_time)
-    if (bookTime.getHours() < footballshop.active_at || bookTime.getHours() > footballshop.inactive_at) {
+    if (bookTime.getHours() < organization.active_at || bookTime.getHours() > organization.inactive_at) {
       return res.status(400).json({ message: "Cannot book at this time" })
     }
 
     const bookedQueue = await FieldBookedQueue.find({})
-    const bookedQueueOfField = bookedQueue.filter((f) => f.field_id?.toString() === field_id.toString())
+    const bookedQueueOfField = bookedQueue.filter((f) => f.field?.toString() === field.toString())
 
     for (const queue of bookedQueueOfField) {
       if (
@@ -86,24 +86,33 @@ router.post("/book", verifyToken, async (req: Request, res: Response) => {
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const { footballshop_id } = req.query
-    if (!footballshop_id) return res.status(400).json({ success: false, message: "Please enter all fields" })
-
-    const footballshop = await FootballShop.findById(footballshop_id)
-    if (!footballshop) return res.status(404).json({ message: "FootballShop not found" })
-
-    const fields = await Field.find({ footballshop_id: footballshop._id })
+    const fields = await Field.find()
     res.status(200).json({ success: true, data: fields })
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message })
   }
 })
 
-router.get("/guest", verifyToken, async (req: Request, res: Response) => {
+router.get("/organization", async (req: Request, res: Response) => {
+  try {
+    const { organization_id } = req.query
+    if (!organization_id) return res.status(400).json({ success: false, message: "Please enter all fields" })
+
+    const organization = await Organization.findById(organization_id)
+    if (!organization) return res.status(404).json({ message: "Organization not found" })
+
+    const fields = await Field.find({ organization: organization?._id })
+    res.status(200).json({ success: true, data: fields })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message })
+  }
+})
+
+router.get("/booked", verifyToken, async (req: Request, res: Response) => {
   try {
     const fields = await FieldBookedQueue.find({
       booked_by: req.user_id
-    }).populate("field_id")
+    }).populate("field")
     res.status(200).json({ success: true, data: fields })
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message })
@@ -148,7 +157,7 @@ router.put("/status/:id", verifyToken, async (req: Request, res: Response) => {
 
     if (status === EBOOKED_QUEUE_STATUS.ACCEPTED) {
       await Field.findByIdAndUpdate(
-        field.field_id,
+        field.field,
         {
           $set: {
             is_being_used: true

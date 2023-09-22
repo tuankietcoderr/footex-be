@@ -18,7 +18,7 @@ router.post("/create-team", verifyToken, async (req: Request, res: Response) => 
 
     const newTeam = new Team({
       ...req.body,
-      owner_id: new toId(req.user_id)
+      owner: new toId(req.user_id)
     })
     await newTeam.save()
     res.status(201).json({ success: true, data: newTeam })
@@ -29,7 +29,7 @@ router.post("/create-team", verifyToken, async (req: Request, res: Response) => 
 
 router.get("/get-owner-teams", verifyToken, async (req: Request, res: Response) => {
   try {
-    const teams = await Team.find({ owner_id: new toId(req.user_id) })
+    const teams = await Team.find({ owner: new toId(req.user_id) })
     res.status(200).json({ success: true, data: teams })
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message })

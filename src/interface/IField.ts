@@ -1,8 +1,8 @@
 import { Types } from "mongoose"
-import IFootballShop from "./IFootballShop"
+import IOrganization from "./IOrganization"
 
 export default interface IField {
-  footballshop_id?: Types.ObjectId | IFootballShop
+  organization?: Types.ObjectId | IOrganization
   name: string
   price?: number
   description?: string

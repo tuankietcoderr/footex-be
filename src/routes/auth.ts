@@ -65,7 +65,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     await newUser.save()
     const bcryptPassword = await bcrypt.hash(password, 10)
     const newCredential = new Credential({
-      userId: newUser._id,
+      user_id: newUser._id,
       password: bcryptPassword
     })
     await newCredential.save()
@@ -90,7 +90,7 @@ router.post("/signin", async (req, res) => {
     if (!user) return res.status(400).json({ success: false, message: "User does not exist" })
 
     const credential = await Credential.findOne({
-      userId: user._id
+      user_id: user._id
     })
 
     if (!credential) {

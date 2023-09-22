@@ -19,9 +19,9 @@ const TournamentSchema = new Schema<ITournament>(
     name: {
       type: String
     },
-    organizer_id: {
+    organizer: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.FOOTBALL_SHOPS
+      ref: SCHEMA.ORGANIZATIONS
     },
     sponsors: [
       {

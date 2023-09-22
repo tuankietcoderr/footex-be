@@ -5,20 +5,28 @@ import IField from "../interface/IField"
 const FieldSchema = new Schema<IField>(
   {
     name: {
-      type: String
+      type: String,
+      min: [6, "Quá ngắn, tối thiểu 6 ký tự"],
+      max: [255, "Quá dài, tối đa 255 ký tự"],
+      required: [true, "Vui lòng nhập tên sân bóng"]
     },
     price: {
-      type: Number
+      type: Number,
+      min: [1000, "Giá không được nhỏ hơn 1 nghìn"],
+      max: [1000000000, "Giá không được lớn hơn 1 tỷ"],
+      required: [true, "Vui lòng nhập giá"]
     },
     description: {
-      type: String
+      type: String,
+      min: [6, "Quá ngắn, tối thiểu 6 ký tự"],
+      max: [5000, "Quá dài, tối đa 5000 ký tự"]
     },
     is_being_used: {
       type: Boolean
     },
-    footballshop_id: {
+    organization: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.FOOTBALL_SHOPS
+      ref: SCHEMA.ORGANIZATIONS
     }
   },
   {

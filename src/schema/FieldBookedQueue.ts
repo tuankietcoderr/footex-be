@@ -7,7 +7,7 @@ const FieldBookedQueueSchema = new Schema<IFieldBookedQueue>({
     type: Schema.Types.ObjectId,
     ref: SCHEMA.USERS
   },
-  field_id: {
+  field: {
     type: Schema.Types.ObjectId,
     ref: SCHEMA.FIELDS
   },

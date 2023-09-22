@@ -7,5 +7,5 @@ export default interface ITeam {
   description?: string
   images?: string[]
   members: Types.ObjectId[]
-  owner_id: Types.ObjectId | IUser
+  owner: Types.ObjectId | IUser
 }

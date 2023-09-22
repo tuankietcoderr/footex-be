@@ -1,6 +1,6 @@
 import { Types } from "mongoose"
 
 export default interface ICredential {
-  userId: Types.ObjectId
+  user_id: Types.ObjectId
   password: string
 }

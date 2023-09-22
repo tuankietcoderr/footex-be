@@ -1,4 +1,5 @@
 import { Types } from "mongoose"
+import IOrganization from "./IOrganization"
 
 export interface ISponsor {
   name: string
@@ -12,7 +13,7 @@ export default interface ITournament {
   end_date?: Date
   description?: string
   teams: Types.ObjectId[]
-  organizer_id: Types.ObjectId
+  organizer: Types.ObjectId | IOrganization
   sponsors: ISponsor[]
   //   timelines?:
 }

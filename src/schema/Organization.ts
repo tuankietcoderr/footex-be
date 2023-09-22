@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose"
 import { SCHEMA } from "./schema-name"
-import IFootballShop, { EFootballShopStatus } from "../interface/IFootballShop"
+import IOrganization, { EOrganizationStatus } from "../interface/IOrganization"
 
-const FootballShopSchema = new Schema<IFootballShop>(
+const OrganizationSchema = new Schema<IOrganization>(
   {
     email: {
       type: String
@@ -22,7 +22,7 @@ const FootballShopSchema = new Schema<IFootballShop>(
     phone_number: {
       type: String
     },
-    owner_id: {
+    owner: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.USERS
     },
@@ -44,4 +44,4 @@ const FootballShopSchema = new Schema<IFootballShop>(
   }
 )
 
-export default model<IFootballShop>(SCHEMA.FOOTBALL_SHOPS, FootballShopSchema)
+export default model<IOrganization>(SCHEMA.ORGANIZATIONS, OrganizationSchema)

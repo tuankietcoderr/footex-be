@@ -1,4 +1,6 @@
 import { Types } from "mongoose"
+import IUser from "./IUser"
+import ITeam from "./ITeam"
 
 export enum EInvitementStatus {
   PENDING = "PENDING",
@@ -9,7 +11,7 @@ export enum EInvitementStatus {
 export default interface IInvitement {
   title: string
   owner_title: string
-  team_id: Types.ObjectId
-  user_id: Types.ObjectId
+  team: Types.ObjectId | ITeam
+  user: Types.ObjectId | IUser
   status: EInvitementStatus
 }
