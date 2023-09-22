@@ -3,7 +3,7 @@ import { SCHEMA } from "./schema-name"
 import ICredential from "../interface/ICredential"
 
 const CredentialSchema = new Schema<ICredential>({
-  userId: {
+  user_id: {
     type: Schema.Types.ObjectId,
     ref: SCHEMA.USERS
   },
