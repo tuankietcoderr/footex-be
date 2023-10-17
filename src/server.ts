@@ -1,10 +1,12 @@
-import express from "express"
-import { config, run } from "./utils/config"
-import { connectDB } from "./utils/db"
-import getRoutes from "./routes"
+import { configDotenv } from "dotenv"
+import App from "./app"
+import { IRouter } from "./interface"
+import { AuthRoutes } from "./routes"
+configDotenv()
 
-const app = config(express)
+const routes: IRouter[] = [new AuthRoutes()]
 
-getRoutes(app)
-connectDB()
-run(app)
+const app = new App(routes, Number(process.env.PORT || 2003))
+
+app.config()
+app.listen()

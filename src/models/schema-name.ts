@@ -1,0 +1,23 @@
+export const SCHEMA = {
+  CREDENTIALS: "credentials",
+  USERS: "users",
+  OWNERS: "owners",
+  ADMINS: "admins",
+  GUESTS: "guests",
+  VISITING_GUESTS: "visiting_guests",
+  REGISTERED_GUESTS: "registered_guests",
+  BRANCHES: "branches",
+  FIELDS: "fields",
+  FIELD_BOOKED_QUEUES: "field_booked_queues",
+  TEAMS: "teams",
+  TOURNAMENTS: "tournaments",
+  INVITEMENTS: "invitements",
+  RATES: "rates",
+  MATCHES: "matches",
+  MATCH_RESULTS: "match_results",
+  MATCH_RESULTS_DETAILS: "match_results_details",
+  GOAL_DETAILS: "goal_details",
+  CARDS: "cards",
+  CARF_FINES: "card_fines",
+  PRIZES: "prizes"
+}
