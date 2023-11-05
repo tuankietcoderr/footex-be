@@ -1,6 +1,6 @@
 import { Router } from "express"
 
 export default interface IRouter {
-  path: string
-  router: Router
+  readonly path: string
+  readonly router: Router
 }

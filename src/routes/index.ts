@@ -1,4 +1,9 @@
 import ExpressRoutes from "./express.routes"
-import AuthRoutes from "./auth.routes"
+import AdminRoutes from "./admin.routes"
+import OwnerRoutes from "./owner.routes"
+import GuestRoutes from "./guest.routes"
+import BranchRoutes from "./branch.routes"
+import FieldRoutes from "./field.routes"
+import FieldBookedQueueRoutes from "./field-booked-queue.routes"
 
-export { ExpressRoutes, AuthRoutes }
+export { ExpressRoutes, AdminRoutes, OwnerRoutes, GuestRoutes, BranchRoutes, FieldRoutes, FieldBookedQueueRoutes }

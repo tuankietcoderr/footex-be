@@ -1,17 +1,11 @@
-import { Types } from "mongoose"
-import { ERole } from "../../enum"
-import IAdmin from "../admin/admin.interface"
-import IGuest from "../guest/guest.interface"
-import IOwner from "../owner/owner.interface"
+import IAddress from "../address.interface"
 
-export default interface IUser<T = IGuest | IAdmin | IOwner> {
+export default interface IUser {
   password: string
   name: string
   email: string
   avatar: string
   phoneNumber: string
   isEmailVerified: boolean
-  role: ERole
-  refPath: string
-  attributes: Types.ObjectId | string | T
+  address: IAddress
 }

@@ -1,8 +1,6 @@
 import IAdmin from "./admin/admin.interface"
 import IGuest from "./guest/guest.interface"
-import IRegisteredGuest from "./guest/registered-guest.interface"
 import ITeam from "./guest/team.interface"
-import IVisitingGuest from "./guest/visiting-guest.interface"
 import IBranch from "./owner/branch.interface"
 import IField from "./owner/field.interface"
 import IFieldBookedQueue from "./owner/field-booked-queue.interface"
@@ -25,9 +23,7 @@ import IInvitement from "./user/invitement.interface"
 export {
   IAdmin,
   IGuest,
-  IRegisteredGuest,
   ITeam,
-  IVisitingGuest,
   IBranch,
   IField,
   IFieldBookedQueue,

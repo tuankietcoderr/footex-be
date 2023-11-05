@@ -32,17 +32,6 @@ class App {
   }
 
   private initializeMiddleware(): void {
-    this.express.use(express.json())
-    this.express.use(express.urlencoded({ extended: true }))
-  }
-
-  private initializeControllers(routes: IRouter[]): void {
-    routes.forEach((route: IRouter) => {
-      this.express.use("/api", route.router)
-    })
-  }
-
-  public config() {
     const app = this.express
     app.use(
       cors({
@@ -71,6 +60,12 @@ class App {
     app.use(express.urlencoded({ extended: true, limit: "50mb" }))
     app.use(express.json({ limit: "50mb" }))
     app.set("view engine", "ejs")
+  }
+
+  private initializeControllers(routes: IRouter[]): void {
+    routes.forEach((route: IRouter) => {
+      this.express.use("/api", route.router)
+    })
   }
 
   public listen(): void {

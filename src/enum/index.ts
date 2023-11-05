@@ -23,6 +23,7 @@ enum EBranchStatus {
 }
 
 enum EFieldBookedQueueStatus {
+  PENDING = "pending",
   APPROVED = "approved",
   DECLINED = "declined"
 }
@@ -44,4 +45,21 @@ enum EInvitementStatus {
   DECLINED = "declined"
 }
 
-export { ERole, EGuest, EFieldStatus, EBranchStatus, EFieldBookedQueueStatus, ETeamStatus, ERate, EInvitementStatus }
+enum EOwnerStatus {
+  PENDING = "pending",
+  ACTIVE = "active",
+  BLOCKED = "blocked",
+  REJECTED = "rejected"
+}
+
+export {
+  ERole,
+  EGuest,
+  EFieldStatus,
+  EBranchStatus,
+  EFieldBookedQueueStatus,
+  ETeamStatus,
+  ERate,
+  EInvitementStatus,
+  EOwnerStatus
+}
