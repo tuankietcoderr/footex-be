@@ -53,7 +53,8 @@ class App {
         ],
         maxAge: 86400,
         preflightContinue: false,
-        optionsSuccessStatus: 204
+        optionsSuccessStatus: 204,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
       })
     )
     app.use(morgan("combined"))
