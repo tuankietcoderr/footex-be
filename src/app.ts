@@ -5,11 +5,10 @@ import morgan from "morgan"
 import { IRouter } from "./interface"
 
 class App {
-  public express: Express
+  public express: Express = express()
   public port: number
 
   constructor(routes: IRouter[], port: number) {
-    this.express = express()
     this.port = port
     //! THE ORDER OF THESE FUNCTIONS IS IMPORTANT
     this.initializeDatabaseConnection()
@@ -32,8 +31,7 @@ class App {
   }
 
   private initializeMiddleware(): void {
-    const app = this.express
-    app.use(
+    this.express.use(
       cors({
         origin: "*",
         exposedHeaders: "content-length",
@@ -53,14 +51,13 @@ class App {
         ],
         maxAge: 86400,
         preflightContinue: false,
-        optionsSuccessStatus: 204,
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+        optionsSuccessStatus: 204
       })
     )
-    app.use(morgan("combined"))
-    app.use(express.urlencoded({ extended: true, limit: "50mb" }))
-    app.use(express.json({ limit: "50mb" }))
-    app.set("view engine", "ejs")
+    this.express.use(morgan("combined"))
+    this.express.use(express.urlencoded({ extended: true, limit: "50mb" }))
+    this.express.use(express.json({ limit: "50mb" }))
+    this.express.set("view engine", "ejs")
   }
 
   private initializeControllers(routes: IRouter[]): void {
