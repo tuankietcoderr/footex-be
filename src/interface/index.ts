@@ -5,7 +5,6 @@ import IBranch from "./owner/branch.interface"
 import IField from "./owner/field.interface"
 import IFieldBookedQueue from "./owner/field-booked-queue.interface"
 import IOwner from "./owner/owner.interface"
-import ICard from "./tournaments/match/card.interface"
 import ICardFine from "./tournaments/match/card-fine.interface"
 import IGoalDetail from "./tournaments/match/goal-detail.interface"
 import IMatch from "./tournaments/match/match.interface"
@@ -28,7 +27,6 @@ export {
   IField,
   IFieldBookedQueue,
   IOwner,
-  ICard,
   ICardFine,
   IGoalDetail,
   IMatch,

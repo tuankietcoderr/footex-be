@@ -3,7 +3,24 @@ configDotenv()
 
 import App from "./app"
 import { IRouter } from "./interface"
-import { AdminRoutes, BranchRoutes, FieldBookedQueueRoutes, FieldRoutes, GuestRoutes, OwnerRoutes } from "./routes"
+import {
+  AdminRoutes,
+  BranchRoutes,
+  CardFineRoutes,
+  FieldBookedQueueRoutes,
+  FieldRoutes,
+  GoalDetailRoutes,
+  GuestRoutes,
+  InvitementRoutes,
+  MatchResultDetailRoutes,
+  MatchResultRoutes,
+  MatchRoutes,
+  OwnerRoutes,
+  PrizeRoutes,
+  RateRoutes,
+  TeamRoutes,
+  TournamentRoutes
+} from "./routes"
 
 const routes: IRouter[] = [
   new AdminRoutes(),
@@ -11,7 +28,17 @@ const routes: IRouter[] = [
   new OwnerRoutes(),
   new BranchRoutes(),
   new FieldRoutes(),
-  new FieldBookedQueueRoutes()
+  new FieldBookedQueueRoutes(),
+  new InvitementRoutes(),
+  new TeamRoutes(),
+  new TournamentRoutes(),
+  new PrizeRoutes(),
+  new RateRoutes(),
+  new MatchRoutes(),
+  new MatchResultRoutes(),
+  new MatchResultDetailRoutes(),
+  new GoalDetailRoutes(),
+  new CardFineRoutes()
 ]
 
 const app = new App(routes, Number(process.env.PORT || 2003))

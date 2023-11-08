@@ -2,7 +2,8 @@ import { Request, Response, Router } from "express"
 import { OwnerController } from "../controllers"
 import { HttpStatusCode, ResponseHelper } from "../helper"
 import { IOwner, IRouter } from "../interface"
-import { BodyFieldMiddleware } from "../middleware"
+import { AuthMiddleware, BodyFieldMiddleware } from "../middleware"
+import { ERole } from "../enum"
 
 class OwnerRoutes implements IRouter {
   readonly router: Router = Router()
@@ -31,6 +32,7 @@ class OwnerRoutes implements IRouter {
     this.router.post(this.PATHS.SIGN_IN, BodyFieldMiddleware.mustHaveFields<IOwner>("password"), OwnerRoutes.signIn)
     this.router.post(this.PATHS.SEND_VERIFY_EMAIL, OwnerRoutes.sendVerifyEmail)
     this.router.get(this.PATHS.VERIFY_EMAIL, OwnerRoutes.verifyEmail)
+    this.router.get(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.OWNER]), OwnerRoutes.getCurrentOwner)
     this.router.post(this.PATHS.FORGOT_PASSWORD, OwnerRoutes.forgotPassword)
   }
 
@@ -76,6 +78,13 @@ class OwnerRoutes implements IRouter {
       const { email } = req.query
       await OwnerController.forgotPassword(email as string)
       return ResponseHelper.successfulResponse(res, "Gửi email đặt lại mật khẩu thành công!", HttpStatusCode.OK)
+    })
+  }
+
+  private static async getCurrentOwner(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await OwnerController.getOwnerById(req.userId)
+      return ResponseHelper.successfulResponse(res, "Lấy thông tin chủ nhà thành công!", HttpStatusCode.OK, { data })
     })
   }
 }

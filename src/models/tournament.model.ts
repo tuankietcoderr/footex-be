@@ -15,7 +15,8 @@ const TournamentModel = new Schema<ITournament>(
     },
     endAt: {
       type: Date,
-      default: Date.now
+      default: Date.now(),
+      min: [Date.now(), "Ngày kết thúc không được nhỏ hơn ngày hiện tại"]
     },
     images: {
       type: [String],
@@ -31,7 +32,8 @@ const TournamentModel = new Schema<ITournament>(
     },
     startAt: {
       type: Date,
-      default: Date.now
+      default: Date.now(),
+      min: [Date.now(), "Ngày bắt đầu không được nhỏ hơn ngày hiện tại"]
     },
     teams: [
       {

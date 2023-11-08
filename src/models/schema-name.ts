@@ -4,8 +4,6 @@ export const SCHEMA = {
   OWNERS: "owners",
   ADMINS: "admins",
   GUESTS: "guests",
-  VISITING_GUESTS: "visiting_guests",
-  REGISTERED_GUESTS: "registered_guests",
   BRANCHES: "branches",
   FIELDS: "fields",
   FIELD_BOOKED_QUEUES: "field_booked_queues",
@@ -17,7 +15,6 @@ export const SCHEMA = {
   MATCH_RESULTS: "match_results",
   MATCH_RESULTS_DETAILS: "match_results_details",
   GOAL_DETAILS: "goal_details",
-  CARDS: "cards",
-  CARF_FINES: "card_fines",
+  CARD_FINES: "card_fines",
   PRIZES: "prizes"
 }

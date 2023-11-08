@@ -12,7 +12,7 @@ class BranchRoutes implements IRouter {
   private readonly PATHS = {
     ROOT: this.path,
     ID: `${this.path}/:id`,
-    STATUS: `${this.path}/:id/status`
+    OWNER: `${this.path}/owner`
   }
 
   constructor() {
@@ -21,27 +21,24 @@ class BranchRoutes implements IRouter {
 
   private initializeRoutes(): void {
     this.router.get(this.PATHS.ROOT, BranchRoutes.getAllBranches)
-    this.router.get(this.PATHS.ID, BranchRoutes.getBranchById)
     this.router.post(
       this.PATHS.ROOT,
-      AuthMiddleware.verifyRoles([ERole.ADMIN, ERole.OWNER]),
+      AuthMiddleware.verifyRoles([ERole.OWNER]),
       BodyFieldMiddleware.mustHaveFields<IBranch>("name", "address", "openAt", "closeAt"),
       BodyFieldMiddleware.doNotAllowFields<IBranch>("status", "owner"),
       BranchRoutes.createBranch
     )
 
+    this.router.get(this.PATHS.OWNER, AuthMiddleware.verifyRoles([ERole.OWNER]), BranchRoutes.getOwnerBranches)
+
+    this.router.get(this.PATHS.ID, BranchRoutes.getBranchById)
     this.router.put(
       this.PATHS.ID,
-      AuthMiddleware.verifyRoles([ERole.ADMIN, ERole.OWNER]),
+      AuthMiddleware.verifyRoles([ERole.OWNER]),
       BodyFieldMiddleware.doNotAllowFields<IBranch>("status", "owner"),
       BranchRoutes.updateBranchInfo
     )
-
-    this.router.put(
-      this.PATHS.STATUS,
-      AuthMiddleware.verifyRoles([ERole.ADMIN, ERole.OWNER]),
-      BranchRoutes.updateBranchStatus
-    )
+    this.router.delete(this.PATHS.ID, AuthMiddleware.verifyRoles([ERole.OWNER]), BranchRoutes.deleteBranch)
   }
 
   static async getAllBranches(req: Request, res: Response) {
@@ -62,7 +59,7 @@ class BranchRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await BranchController.create({
         ...req.body,
-        owner: req.user_id
+        owner: req.userId
       })
       return ResponseHelper.successfulResponse(res, "Tạo sân bóng thành công!", HttpStatusCode.OK, { data })
     })
@@ -77,12 +74,17 @@ class BranchRoutes implements IRouter {
     })
   }
 
-  static async updateBranchStatus(req: Request, res: Response) {
+  static async getOwnerBranches(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await BranchController.updateStatus(req.params.id, req.body.status as EBranchStatus)
-      return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái sân bóng thành công!", HttpStatusCode.OK, {
-        data
-      })
+      const { data } = await BranchController.getOwnerBranches(req.userId)
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách sân bóng thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async deleteBranch(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await BranchController.delete(req.params.id)
+      return ResponseHelper.successfulResponse(res, "Xóa sân bóng thành công!", HttpStatusCode.OK, { data })
     })
   }
 }

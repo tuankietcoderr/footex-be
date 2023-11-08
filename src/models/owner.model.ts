@@ -31,9 +31,6 @@ const OwnerModel = new Schema<IOwner>(
       type: String,
       required: true
     },
-    password: {
-      type: String
-    },
     phoneNumber: {
       type: String,
       required: true

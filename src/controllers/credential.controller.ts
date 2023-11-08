@@ -2,23 +2,20 @@ import { Types } from "mongoose"
 import { CredentialModel } from "../models"
 import bcrypt from "bcryptjs"
 import jwt, { JwtPayload } from "jsonwebtoken"
+import { CustomError, HttpStatusCode } from "../helper"
 
 class CredentialController {
   static async getCredential(userId: string | Types.ObjectId) {
     const credential = await CredentialModel.findOne({
-      user_id: userId
+      userId: userId
     })
-    if (!credential) return Promise.reject(new Error("Tài khoản không tồn tại"))
+    if (!credential) return Promise.reject(new CustomError("Tài khoản không tồn tại", HttpStatusCode.BAD_REQUEST))
     return credential
   }
 
   static async updateCredential(userId: string | Types.ObjectId, password: string) {
-    const credential = await CredentialModel.findOneAndUpdate(
-      { user_id: userId },
-      { $set: { password } },
-      { new: true }
-    )
-    if (!credential) return Promise.reject(new Error("Tài khoản không tồn tại"))
+    const credential = await CredentialModel.findOneAndUpdate({ userId: userId }, { $set: { password } }, { new: true })
+    if (!credential) return Promise.reject(new CustomError("Tài khoản không tồn tại", HttpStatusCode.BAD_REQUEST))
     return credential
   }
 
@@ -27,8 +24,8 @@ class CredentialController {
     return isMatch
   }
 
-  static JWTSign({ role, user_id }: Pick<JwtPayload, "role" | "user_id">, expiresIn: string = "1y") {
-    return jwt.sign({ user_id: user_id, role }, process.env.JWT_SECRET!, { expiresIn })
+  static JWTSign({ role, userId }: Pick<JwtPayload, "role" | "userId">, expiresIn: string = "1y") {
+    return jwt.sign({ userId: userId, role }, process.env.JWT_SECRET!, { expiresIn })
   }
 
   static async hash(password: string) {

@@ -36,6 +36,12 @@ const TeamModel = new Schema<ITeam>(
         type: Schema.Types.ObjectId,
         ref: SCHEMA.GUESTS
       }
+    ],
+    jointTournaments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: SCHEMA.TOURNAMENTS
+      }
     ]
   },
   {

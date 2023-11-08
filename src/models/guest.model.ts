@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose"
 import { IAddress, IGuest } from "../interface"
-import { EGuest } from "../enum"
+import { EGuestStatus } from "../enum"
 import { SCHEMA } from "./schema-name"
 
 const GuestModel = new Schema<IGuest>(
@@ -31,9 +31,10 @@ const GuestModel = new Schema<IGuest>(
       type: String,
       required: true
     },
-    password: {
+    status: {
       type: String,
-      required: true
+      enum: Object.values(EGuestStatus),
+      default: EGuestStatus.ACTIVE
     }
   },
   {

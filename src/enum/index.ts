@@ -4,22 +4,19 @@ enum ERole {
   GUEST = "guest"
 }
 
-enum EGuest {
-  VISITING_GUEST = "visiting_guest",
-  REGISTERED_GUEST = "registered_guest"
-}
-
 enum EFieldStatus {
   ACTIVE = "active",
   BUSY = "busy",
-  MAINTAINING = "maintaining"
+  MAINTAINING = "maintaining",
+  DELETED = "deleted"
 }
 
 enum EBranchStatus {
   ACTIVE = "active",
   MAINTAINING = "maintaining",
   REJECTED = "rejected",
-  BLOCKED = "blocked"
+  BLOCKED = "blocked",
+  DELETED = "deleted"
 }
 
 enum EFieldBookedQueueStatus {
@@ -30,13 +27,19 @@ enum EFieldBookedQueueStatus {
 
 enum ETeamStatus {
   ACTIVE = "active",
-  BLOCKED = "blocked"
+  BLOCKED = "blocked",
+  DELETED = "deleted"
 }
 
 enum ERate {
   TEAM = "team",
   FIELD = "field",
   BRANCH = "branch"
+}
+
+enum ECard {
+  YELLOW = "yellow",
+  RED = "red"
 }
 
 enum EInvitementStatus {
@@ -49,17 +52,25 @@ enum EOwnerStatus {
   PENDING = "pending",
   ACTIVE = "active",
   BLOCKED = "blocked",
-  REJECTED = "rejected"
+  REJECTED = "rejected",
+  DELETED = "deleted"
+}
+
+enum EGuestStatus {
+  ACTIVE = "active",
+  BLOCKED = "blocked",
+  DELETED = "deleted"
 }
 
 export {
   ERole,
-  EGuest,
   EFieldStatus,
   EBranchStatus,
   EFieldBookedQueueStatus,
   ETeamStatus,
   ERate,
   EInvitementStatus,
-  EOwnerStatus
+  EOwnerStatus,
+  EGuestStatus,
+  ECard
 }

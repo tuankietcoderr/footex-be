@@ -10,7 +10,7 @@ class FieldBookedQueueController extends BaseController {
     super()
   }
 
-  static async validateFieldBookedQueue(id: string | Types.ObjectId) {
+  static async validate(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const fieldBookedQueue = await FieldBookedQueueModel.findById(id)
       if (!fieldBookedQueue)
@@ -22,13 +22,13 @@ class FieldBookedQueueController extends BaseController {
   static async create(body: IFieldBookedQueue) {
     return await super.handleResponse(async () => {
       const { field } = body
-      await FieldController.validateField(field as string)
+      await FieldController.validate(field as string)
       const fieldBookedQueue = await FieldBookedQueueModel.create(body)
       return fieldBookedQueue
     })
   }
 
-  static async updateFieldBookedQueueInfo(id: string | Types.ObjectId, body: IFieldBookedQueue) {
+  static async updateInfo(id: string | Types.ObjectId, body: IFieldBookedQueue) {
     return await super.handleResponse(async () => {
       const fieldBookedQueue = await FieldBookedQueueModel.findByIdAndUpdate(id, { $set: body }, { new: true })
       if (!fieldBookedQueue)
@@ -37,7 +37,7 @@ class FieldBookedQueueController extends BaseController {
     })
   }
 
-  static async updateFieldBookedQueueStatus(id: string | Types.ObjectId, status: string) {
+  static async updateStatus(id: string | Types.ObjectId, status: string) {
     return await super.handleResponse(async () => {
       const fieldBookedQueue = await FieldBookedQueueModel.findByIdAndUpdate(
         id,
@@ -50,14 +50,14 @@ class FieldBookedQueueController extends BaseController {
     })
   }
 
-  static async getUserFieldBookedQueue(id: string | Types.ObjectId) {
+  static async getGuestFieldBookedQueue(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const fieldBookedQueue = await FieldBookedQueueModel.find({ bookedBy: id })
       return fieldBookedQueue
     })
   }
 
-  static async getFieldBookedQueueById(id: string | Types.ObjectId) {
+  static async getById(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const fieldBookedQueue = await FieldBookedQueueModel.findById(id)
       if (!fieldBookedQueue)
@@ -66,15 +66,15 @@ class FieldBookedQueueController extends BaseController {
     })
   }
 
-  static async getFieldBookedQueueByFieldId(id: string | Types.ObjectId) {
+  static async getByFieldId(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      await FieldController.validateField(id)
+      await FieldController.validate(id)
       const fieldBookedQueue = await FieldBookedQueueModel.find({ field: id })
       return fieldBookedQueue
     })
   }
 
-  static async deleteFieldBookedQueue(id: string | Types.ObjectId) {
+  static async delete(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const fieldBookedQueue = await FieldBookedQueueModel.findByIdAndDelete(id)
       if (!fieldBookedQueue)

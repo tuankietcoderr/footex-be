@@ -8,6 +8,10 @@ class MailController extends BaseController {
   private static readonly _appName: string = process.env.APP_NAME
   private static _mailService: MailService = new MailService()
 
+  constructor() {
+    super()
+  }
+
   static async sendVerifyEmail(email: string, route: string) {
     return await super.handleResponse(async () => {
       const hashedEmail = await CredentialController.hash(email)

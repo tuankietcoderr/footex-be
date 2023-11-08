@@ -3,7 +3,7 @@ import { ERole } from "../enum"
 
 declare module "jsonwebtoken" {
   export interface JwtPayload {
-    user_id: string
+    userId: string
     role: ERole
   }
 }

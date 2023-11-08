@@ -5,5 +5,33 @@ import GuestRoutes from "./guest.routes"
 import BranchRoutes from "./branch.routes"
 import FieldRoutes from "./field.routes"
 import FieldBookedQueueRoutes from "./field-booked-queue.routes"
+import InvitementRoutes from "./invitement.routes"
+import TeamRoutes from "./team.routes"
+import TournamentRoutes from "./tournament.routes"
+import PrizeRoutes from "./prize.routes"
+import RateRoutes from "./rate.routes"
+import MatchRoutes from "./match.routes"
+import MatchResultRoutes from "./match-result.routes"
+import MatchResultDetailRoutes from "./match-result-detail.routes"
+import GoalDetailRoutes from "./goal-detail.routes"
+import CardFineRoutes from "./card-fine.routes"
 
-export { ExpressRoutes, AdminRoutes, OwnerRoutes, GuestRoutes, BranchRoutes, FieldRoutes, FieldBookedQueueRoutes }
+export {
+  ExpressRoutes,
+  AdminRoutes,
+  OwnerRoutes,
+  GuestRoutes,
+  BranchRoutes,
+  FieldRoutes,
+  FieldBookedQueueRoutes,
+  InvitementRoutes,
+  TeamRoutes,
+  TournamentRoutes,
+  PrizeRoutes,
+  RateRoutes,
+  MatchRoutes,
+  MatchResultRoutes,
+  MatchResultDetailRoutes,
+  GoalDetailRoutes,
+  CardFineRoutes
+}

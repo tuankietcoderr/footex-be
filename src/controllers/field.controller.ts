@@ -10,7 +10,7 @@ class FieldController extends BaseController {
     super()
   }
 
-  static async validateField(id: string | Types.ObjectId) {
+  static async validate(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const field = await FieldModel.findById(id)
       if (!field) return Promise.reject(new CustomError("Sân bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
@@ -18,15 +18,15 @@ class FieldController extends BaseController {
     })
   }
 
-  static async getAllFields() {
+  static async getAll() {
     return await super.handleResponse(async () => {
       const fields = await FieldModel.find()
       return fields
     })
   }
 
-  static async getFieldById(id: string | Types.ObjectId) {
-    return this.validateField(id)
+  static async getById(id: string | Types.ObjectId) {
+    return this.validate(id)
   }
 
   static async getBranchsField(id: string | Types.ObjectId) {
@@ -43,7 +43,7 @@ class FieldController extends BaseController {
     })
   }
 
-  static async updateFieldInfo(id: string | Types.ObjectId, body: IField) {
+  static async updateInfo(id: string | Types.ObjectId, body: IField) {
     return await super.handleResponse(async () => {
       const field = await FieldModel.findByIdAndUpdate(id, { $set: body }, { new: true })
       if (!field) return Promise.reject(new CustomError("Sân bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
@@ -51,7 +51,7 @@ class FieldController extends BaseController {
     })
   }
 
-  static async updateFieldStatus(id: string | Types.ObjectId, status: EFieldStatus) {
+  static async updateStatus(id: string | Types.ObjectId, status: EFieldStatus) {
     return await super.handleResponse(async () => {
       const field = await FieldModel.findByIdAndUpdate(id, { $set: { status } }, { new: true, runValidators: true })
       if (!field) return Promise.reject(new CustomError("Sân bóng không tồn tại", HttpStatusCode.BAD_REQUEST))

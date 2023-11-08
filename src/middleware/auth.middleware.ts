@@ -16,10 +16,11 @@ class AuthMiddleware {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
 
-        req.user_id = decoded.user_id
+        req.userId = decoded.userId
         req.role = decoded.role
 
         if (!roles) return next()
+        !roles.includes(ERole.ADMIN) && roles.push(ERole.ADMIN)
         if (!roles.includes(decoded.role)) {
           return ResponseHelper.errorResponse(
             res,

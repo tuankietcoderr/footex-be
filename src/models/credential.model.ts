@@ -4,7 +4,7 @@ import { SCHEMA } from "./schema-name"
 
 const CredentialModel = new Schema<ICredential>(
   {
-    user_id: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.USERS
     },

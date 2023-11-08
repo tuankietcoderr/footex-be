@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express"
-import { IField, IRouter } from "../interface"
 import { FieldController } from "../controllers"
-import { CustomError, HttpStatusCode, ICustomError, ResponseHelper } from "../helper"
+import { ERole } from "../enum"
+import { HttpStatusCode, ResponseHelper } from "../helper"
+import { IField, IRouter } from "../interface"
 import { AuthMiddleware, BodyFieldMiddleware } from "../middleware"
-import { EFieldStatus, ERole } from "../enum"
 
 class FieldRoutes implements IRouter {
   readonly path: string = "/field"
@@ -12,7 +12,6 @@ class FieldRoutes implements IRouter {
   private readonly PATHS = {
     ROOT: this.path,
     ID: `${this.path}/:id`,
-    STATUS: `${this.path}/:id/status`,
     BRANCH: `${this.path}/branch/:id`
   }
 
@@ -36,24 +35,18 @@ class FieldRoutes implements IRouter {
       BodyFieldMiddleware.doNotAllowFields<IField>("status"),
       FieldRoutes.updateField
     )
-    this.router.put(
-      this.PATHS.STATUS,
-      AuthMiddleware.verifyRoles([ERole.ADMIN, ERole.OWNER]),
-      BodyFieldMiddleware.mustHaveFields<IField>("status"),
-      FieldRoutes.updateFieldStatus
-    )
   }
 
   static async getAllFields(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await FieldController.getAllFields()
+      const { data } = await FieldController.getAll()
       return ResponseHelper.successfulResponse(res, "Lấy danh sách sân bóng thành công!", HttpStatusCode.OK, { data })
     })
   }
 
   static async getFieldById(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await FieldController.getFieldById(req.params.id)
+      const { data } = await FieldController.getById(req.params.id)
       return ResponseHelper.successfulResponse(res, "Lấy thông tin sân bóng thành công!", HttpStatusCode.OK, { data })
     })
   }
@@ -73,16 +66,8 @@ class FieldRoutes implements IRouter {
   }
   static async updateField(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await FieldController.updateFieldInfo(req.params.id, req.body)
+      const { data } = await FieldController.updateInfo(req.params.id, req.body)
       return ResponseHelper.successfulResponse(res, "Cập nhật sân bóng thành công!", HttpStatusCode.OK, { data })
-    })
-  }
-  static async updateFieldStatus(req: Request, res: Response) {
-    await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await FieldController.updateFieldStatus(req.params.id, req.body.status)
-      return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái sân bóng thành công!", HttpStatusCode.OK, {
-        data
-      })
     })
   }
 }

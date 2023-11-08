@@ -7,6 +7,13 @@ import OwnerModel from "./owner.model"
 import TeamModel from "./team.model"
 import TournamentModel from "./tournament.model"
 import GuestModel from "./guest.model"
+import MatchResultModel from "./match-result.model"
+import MatchResultDetailModel from "./match-result-detail.model"
+import MatchModel from "./match.model"
+import GoalDetailModel from "./goal-detail.model"
+import PrizeModel from "./prize.model"
+import RateModel from "./rate.model"
+import CardFineModel from "./card-fine.model"
 
 export {
   BranchModel,
@@ -17,5 +24,12 @@ export {
   OwnerModel,
   TeamModel,
   TournamentModel,
-  GuestModel
+  GuestModel,
+  MatchResultModel,
+  MatchResultDetailModel,
+  MatchModel,
+  GoalDetailModel,
+  PrizeModel,
+  RateModel,
+  CardFineModel
 }
