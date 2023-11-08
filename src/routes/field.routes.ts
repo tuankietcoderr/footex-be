@@ -26,7 +26,7 @@ class FieldRoutes implements IRouter {
     this.router.post(
       this.PATHS.ROOT,
       AuthMiddleware.verifyRoles([ERole.ADMIN, ERole.OWNER]),
-      BodyFieldMiddleware.mustHaveFields<IField>("branch", "price", "name"),
+      BodyFieldMiddleware.mustHaveFields<IField>("branch", "price", "name", "description"),
       FieldRoutes.createField
     )
     this.router.put(

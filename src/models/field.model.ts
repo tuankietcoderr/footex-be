@@ -32,6 +32,9 @@ const FieldModel = new Schema<IField>(
     type: {
       type: Number,
       default: 5
+    },
+    description: {
+      type: String
     }
   },
   {

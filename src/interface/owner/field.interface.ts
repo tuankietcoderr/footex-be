@@ -9,4 +9,5 @@ export default interface IField {
   status: EFieldStatus
   type: number
   branch: Types.ObjectId | string | IBranch
+  description: string
 }
