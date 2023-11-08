@@ -11,10 +11,6 @@ const OwnerModel = new Schema<IOwner>(
       enum: Object.values(EOwnerStatus),
       default: EOwnerStatus.PENDING
     },
-    address: {
-      type: Object,
-      default: {} as IAddress
-    },
     avatar: {
       type: String,
       default: null
@@ -34,6 +30,21 @@ const OwnerModel = new Schema<IOwner>(
     phoneNumber: {
       type: String,
       required: true
+    },
+    city: {
+      type: String
+    },
+    district: {
+      type: String
+    },
+    ward: {
+      type: String
+    },
+    street: {
+      type: String
+    },
+    houseNumber: {
+      type: String
     }
   },
   {

@@ -19,10 +19,6 @@ const GuestModel = new Schema<IGuest>(
       type: Boolean,
       default: false
     },
-    address: {
-      type: Object,
-      default: {} as IAddress
-    },
     avatar: {
       type: String,
       default: null
@@ -35,6 +31,21 @@ const GuestModel = new Schema<IGuest>(
       type: String,
       enum: Object.values(EGuestStatus),
       default: EGuestStatus.ACTIVE
+    },
+    city: {
+      type: String
+    },
+    district: {
+      type: String
+    },
+    ward: {
+      type: String
+    },
+    street: {
+      type: String
+    },
+    houseNumber: {
+      type: String
     }
   },
   {

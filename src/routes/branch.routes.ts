@@ -24,7 +24,7 @@ class BranchRoutes implements IRouter {
     this.router.post(
       this.PATHS.ROOT,
       AuthMiddleware.verifyRoles([ERole.OWNER]),
-      BodyFieldMiddleware.mustHaveFields<IBranch>("name", "address", "openAt", "closeAt"),
+      BodyFieldMiddleware.mustHaveFields<IBranch>("name", "openAt", "closeAt"),
       BodyFieldMiddleware.doNotAllowFields<IBranch>("status", "owner"),
       BranchRoutes.createBranch
     )

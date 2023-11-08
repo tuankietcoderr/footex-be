@@ -25,7 +25,7 @@ class GuestRoutes implements IRouter {
   private initializeRoutes(): void {
     this.router.post(
       this.PATHS.SIGN_UP,
-      BodyFieldMiddleware.mustHaveFields<IGuest>("address", "email", "phoneNumber", "name", "password"),
+      BodyFieldMiddleware.mustHaveFields<IGuest>("email", "phoneNumber", "name", "password"),
       BodyFieldMiddleware.doNotAllowFields<IGuest>("isEmailVerified"),
       GuestRoutes.signUp
     )

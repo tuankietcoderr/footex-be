@@ -13,7 +13,7 @@ class TournamentRoutes implements IRouter {
     ID: `${this.path}/:id`,
     GUEST_JOINT: `${this.path}/joint`,
     TEAM: `${this.path}/team/:teamId`,
-    JOIN: `${this.path}/join/:id`
+    JOIN: `${this.path}/:id/join`
   }
 
   constructor() {

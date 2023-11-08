@@ -1,5 +1,3 @@
-import IAddress from "../address.interface"
-
 export default interface IUser {
   password: string
   name: string
@@ -7,5 +5,9 @@ export default interface IUser {
   avatar: string
   phoneNumber: string
   isEmailVerified: boolean
-  address: IAddress
+  houseNumber: string
+  street: string
+  ward: string
+  district: string
+  city: string
 }

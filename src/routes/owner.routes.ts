@@ -25,7 +25,7 @@ class OwnerRoutes implements IRouter {
   private initializeRoutes(): void {
     this.router.post(
       this.PATHS.SIGN_UP,
-      BodyFieldMiddleware.mustHaveFields<IOwner>("address", "email", "phoneNumber", "name", "password"),
+      BodyFieldMiddleware.mustHaveFields<IOwner>("email", "phoneNumber", "name", "password"),
       BodyFieldMiddleware.doNotAllowFields<IOwner>("isEmailVerified", "status"),
       OwnerRoutes.signUp
     )

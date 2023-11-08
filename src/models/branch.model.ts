@@ -9,16 +9,6 @@ const BranchModel = new Schema<IBranch>(
     name: {
       type: String
     },
-    address: {
-      type: Object,
-      default: {
-        street: "",
-        ward: "",
-        district: "",
-        city: "",
-        houseNumber: ""
-      } as IAddress
-    },
     images: {
       type: [String]
     },
@@ -42,6 +32,24 @@ const BranchModel = new Schema<IBranch>(
     owner: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.OWNERS
+    },
+    city: {
+      type: String
+    },
+    district: {
+      type: String
+    },
+    ward: {
+      type: String
+    },
+    street: {
+      type: String
+    },
+    houseNumber: {
+      type: String
+    },
+    phoneNumber: {
+      type: String
     }
   },
   {
