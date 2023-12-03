@@ -15,7 +15,9 @@ class GuestRoutes implements IRouter {
     SIGN_UP: `${this.path}/signup`,
     VERIFY_EMAIL: `${this.path}/verify-email`,
     SEND_VERIFY_EMAIL: `${this.path}/send-verify-email`,
-    FORGOT_PASSWORD: `${this.path}/forgot-password`
+    FORGOT_PASSWORD: `${this.path}/forgot-password`,
+    ID: `${this.path}/:id`,
+    PHONE_NUMBER: `${this.path}/phone-number/:phoneNumber`
   }
 
   constructor() {
@@ -35,6 +37,7 @@ class GuestRoutes implements IRouter {
     this.router.post(this.PATHS.FORGOT_PASSWORD, GuestRoutes.forgotPassword)
     this.router.get(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.getCurrentGuest)
     this.router.put(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.updateGuestInfo)
+    this.router.get(this.PATHS.PHONE_NUMBER, AuthMiddleware.verifyRoles([ERole.OWNER]), GuestRoutes.getByPhoneNumber)
   }
 
   private static async signUp(req: Request, res: Response) {
@@ -95,6 +98,13 @@ class GuestRoutes implements IRouter {
       return ResponseHelper.successfulResponse(res, "Cập nhật thông tin khách hàng thành công!", HttpStatusCode.OK, {
         data
       })
+    })
+  }
+
+  private static async getByPhoneNumber(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await GuestController.getByPhoneNumber(req.params.phoneNumber)
+      return ResponseHelper.successfulResponse(res, "Lấy thông tin khách hàng thành công!", HttpStatusCode.OK, { data })
     })
   }
 }

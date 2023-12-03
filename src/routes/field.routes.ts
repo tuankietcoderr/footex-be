@@ -12,7 +12,8 @@ class FieldRoutes implements IRouter {
   private readonly PATHS = {
     ROOT: this.path,
     ID: `${this.path}/:id`,
-    BRANCH: `${this.path}/branch/:id`
+    BRANCH: `${this.path}/branch/:id`,
+    STATUS: `${this.path}/:id/status`
   }
 
   constructor() {
@@ -25,16 +26,17 @@ class FieldRoutes implements IRouter {
     this.router.get(this.PATHS.BRANCH, FieldRoutes.getBranchsField)
     this.router.post(
       this.PATHS.ROOT,
-      AuthMiddleware.verifyRoles([ERole.ADMIN, ERole.OWNER]),
+      AuthMiddleware.verifyRoles([ERole.OWNER]),
       BodyFieldMiddleware.mustHaveFields<IField>("branch", "price", "name", "description"),
       FieldRoutes.createField
     )
     this.router.put(
       this.PATHS.ID,
-      AuthMiddleware.verifyRoles([ERole.ADMIN, ERole.OWNER]),
+      AuthMiddleware.verifyRoles([ERole.OWNER]),
       BodyFieldMiddleware.doNotAllowFields<IField>("status"),
       FieldRoutes.updateField
     )
+    this.router.put(this.PATHS.STATUS, AuthMiddleware.verifyRoles([ERole.OWNER]), FieldRoutes.updateStatus)
   }
 
   static async getAllFields(req: Request, res: Response) {
@@ -68,6 +70,15 @@ class FieldRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await FieldController.updateInfo(req.params.id, req.body)
       return ResponseHelper.successfulResponse(res, "Cập nhật sân bóng thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async updateStatus(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await FieldController.updateStatus(req.params.id, req.body.status)
+      return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái sân bóng thành công!", HttpStatusCode.OK, {
+        data
+      })
     })
   }
 }

@@ -13,7 +13,8 @@ class TournamentRoutes implements IRouter {
     ID: `${this.path}/:id`,
     GUEST_JOINT: `${this.path}/joint`,
     TEAM: `${this.path}/team/:teamId`,
-    JOIN: `${this.path}/:id/join`
+    JOIN: `${this.path}/:id/join`,
+    BRANCH: `${this.path}/branch/:id`
   }
 
   constructor() {
@@ -36,6 +37,8 @@ class TournamentRoutes implements IRouter {
     )
     this.router.get(this.PATHS.ID, TournamentRoutes.getTournamentById)
     this.router.post(this.PATHS.JOIN, AuthMiddleware.verifyRoles([ERole.GUEST]), TournamentRoutes.joinTournament)
+    this.router.get(this.PATHS.BRANCH, TournamentRoutes.getBranchsTournaments)
+    this.router.delete(this.PATHS.ID, AuthMiddleware.verifyRoles([ERole.OWNER]), TournamentRoutes.deleteTournament)
   }
 
   static async getAllTournaments(req: Request, res: Response) {
@@ -84,6 +87,20 @@ class TournamentRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await TournamentController.joinTournament(req.params.id, req.body.teamId)
       return ResponseHelper.successfulResponse(res, "Tham gia giải đấu thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async getBranchsTournaments(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await TournamentController.getTournamentsOfBranch(req.params.id)
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách giải đấu thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async deleteTournament(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await TournamentController.delete(req.params.id)
+      return ResponseHelper.successfulResponse(res, "Xóa giải đấu thành công!", HttpStatusCode.OK, { data })
     })
   }
 }

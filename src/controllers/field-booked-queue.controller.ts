@@ -21,10 +21,24 @@ class FieldBookedQueueController extends BaseController {
 
   static async create(body: IFieldBookedQueue) {
     return await super.handleResponse(async () => {
-      const { field } = body
+      const { field, startAt, endAt } = body
+      if (startAt > endAt) {
+        return Promise.reject(
+          new CustomError("Ngày bắt đầu không được lớn hơn ngày kết thúc", HttpStatusCode.BAD_REQUEST)
+        )
+      }
       await FieldController.validate(field as string)
+      const existingFieldBookedQueue = await FieldBookedQueueModel.find({
+        field,
+        startAt: { $gte: startAt },
+        endAt: { $lte: endAt }
+      })
+      if (existingFieldBookedQueue.length > 0) {
+        return Promise.reject(new CustomError("Sân đã được đặt trong khoảng thời gian này", HttpStatusCode.BAD_REQUEST))
+      }
       const fieldBookedQueue = await FieldBookedQueueModel.create(body)
-      return fieldBookedQueue
+      const populatedFieldBookedQueue = await fieldBookedQueue.populate("bookedBy")
+      return populatedFieldBookedQueue
     })
   }
 
@@ -69,7 +83,12 @@ class FieldBookedQueueController extends BaseController {
   static async getByFieldId(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       await FieldController.validate(id)
-      const fieldBookedQueue = await FieldBookedQueueModel.find({ field: id })
+      const fieldBookedQueue = await FieldBookedQueueModel.find({ field: id }, undefined, {
+        populate: {
+          path: "bookedBy",
+          select: "avatar name phoneNumber email"
+        }
+      })
       return fieldBookedQueue
     })
   }

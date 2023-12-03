@@ -3,6 +3,7 @@ import IBranch from "../owner/branch.interface"
 import ITeam from "../guest/team.interface"
 import IMatch from "./match/match.interface"
 import IPrize from "./prize.interface"
+import { ETournamentStatus } from "../../enum"
 
 export default interface ITournament {
   name: string
@@ -14,4 +15,5 @@ export default interface ITournament {
   teams: Types.ObjectId[] | string[] | ITeam[]
   timelines: Types.ObjectId[] | string[] | IMatch[]
   prize: Types.ObjectId | string | IPrize<ITeam>
+  status: ETournamentStatus
 }

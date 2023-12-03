@@ -14,18 +14,19 @@ const PrizeModel = new Schema<IPrize>(
     image: {
       type: String
     },
-    refPath: {
-      type: String,
-      enum: [SCHEMA.GUESTS, SCHEMA.TEAMS],
-      default: SCHEMA.TEAMS
-    },
-    tournament: {
+    branch: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.TOURNAMENTS
+      ref: SCHEMA.BRANCHES
     },
-    winner: {
-      type: Schema.Types.ObjectId,
-      refPath: "refPath"
+    winners: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: SCHEMA.TEAMS
+      }
+    ],
+    value: {
+      type: Number,
+      default: 0
     }
   },
   {

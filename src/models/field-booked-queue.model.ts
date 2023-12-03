@@ -6,16 +6,12 @@ import { EFieldBookedQueueStatus } from "../enum"
 
 const FieldBookedQueueModel = new Schema<IFieldBookedQueue>(
   {
-    bookedAt: {
-      type: Date,
-      default: Date.now
-    },
     bookedBy: {
-      type: Types.ObjectId,
-      ref: SCHEMA.USERS
+      type: Schema.Types.ObjectId,
+      ref: SCHEMA.GUESTS
     },
     field: {
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: SCHEMA.FIELDS
     },
     status: {
@@ -23,9 +19,13 @@ const FieldBookedQueueModel = new Schema<IFieldBookedQueue>(
       enum: Object.values(EFieldBookedQueueStatus),
       default: EFieldBookedQueueStatus.PENDING
     },
-    usageTimeCount: {
-      type: Number,
-      default: 1
+    startAt: {
+      type: Date,
+      default: Date.now()
+    },
+    endAt: {
+      type: Date,
+      default: Date.now()
     }
   },
   {

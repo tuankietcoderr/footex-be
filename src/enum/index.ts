@@ -62,6 +62,12 @@ enum EGuestStatus {
   DELETED = "deleted"
 }
 
+enum ETournamentStatus {
+  ONGOING = "ongoing",
+  FINISHED = "finished",
+  UPCOMING = "upcoming"
+}
+
 export {
   ERole,
   EFieldStatus,
@@ -72,5 +78,6 @@ export {
   EInvitementStatus,
   EOwnerStatus,
   EGuestStatus,
-  ECard
+  ECard,
+  ETournamentStatus
 }

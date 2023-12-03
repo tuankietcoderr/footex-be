@@ -4,6 +4,7 @@ import { CustomError, HttpStatusCode } from "../helper"
 import { IField } from "../interface"
 import { FieldModel } from "../models"
 import BaseController from "./base.controller"
+import BranchController from "./branch.controller"
 
 class FieldController extends BaseController {
   constructor() {
@@ -31,6 +32,7 @@ class FieldController extends BaseController {
 
   static async getBranchsField(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
+      await BranchController.validate(id)
       const fields = await FieldModel.find({ branch: id })
       return fields
     })

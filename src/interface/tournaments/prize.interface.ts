@@ -1,13 +1,13 @@
 import { Types } from "mongoose"
-import ITournament from "./tournament.interface"
 import ITeam from "../guest/team.interface"
 import IGuest from "../guest/guest.interface"
+import IBranch from "../owner/branch.interface"
 
 export default interface IPrize<T = IGuest | ITeam> {
   name: string
   image: string
   description: string
-  refPath: string // guest or team
-  tournament: Types.ObjectId | string | ITournament
-  winner: Types.ObjectId | string | T
+  branch: Types.ObjectId | string | IBranch
+  winners: Types.ObjectId[] | string[] | T[]
+  value: number
 }

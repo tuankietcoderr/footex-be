@@ -123,6 +123,19 @@ class GuestController extends BaseController {
       return await GuestModel.updateOne({ _id }, { $set: { status } })
     })
   }
+
+  static async getAll() {
+    return await super.handleResponse(async () => {
+      return await GuestModel.find()
+    })
+  }
+  static async getByPhoneNumber(phoneNumber: string) {
+    return await super.handleResponse(async () => {
+      const guest = await GuestModel.findOne({ phoneNumber })
+      if (!guest) return Promise.reject(new CustomError("Khách hàng không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return guest
+    })
+  }
 }
 
 export default GuestController

@@ -1,7 +1,8 @@
-import { Schema, model } from "mongoose"
+import { PaginateModel, Schema, model } from "mongoose"
 import { IAddress, IGuest } from "../interface"
 import { EGuestStatus } from "../enum"
 import { SCHEMA } from "./schema-name"
+import paginate from "mongoose-paginate-v2"
 
 const GuestModel = new Schema<IGuest>(
   {
@@ -54,4 +55,6 @@ const GuestModel = new Schema<IGuest>(
   }
 )
 
-export default model<IGuest>(SCHEMA.GUESTS, GuestModel, SCHEMA.GUESTS)
+GuestModel.plugin(paginate)
+
+export default model<IGuest, PaginateModel<IGuest>>(SCHEMA.GUESTS, GuestModel, SCHEMA.GUESTS)

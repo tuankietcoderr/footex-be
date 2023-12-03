@@ -1,17 +1,31 @@
 import { Types } from "mongoose"
-import BaseController from "./base.controller"
-import { TeamModel, TournamentModel } from "../models"
+import { ETournamentStatus } from "../enum"
 import { CustomError, HttpStatusCode } from "../helper"
 import { ITournament } from "../interface"
+import { TeamModel, TournamentModel } from "../models"
+import BaseController from "./base.controller"
 import BranchController from "./branch.controller"
-import { SCHEMA } from "../models/schema-name"
-import GuestController from "./guest.controller"
 import TeamController from "./team.controller"
-import MatchController from "./match.controller"
 
 class TournamentController extends BaseController {
   constructor() {
     super()
+  }
+
+  static async preFind() {
+    return await super.handleResponse(async () => {
+      const tournaments = await TournamentModel.find()
+      for (const tournament of tournaments) {
+        const { _id, startAt, endAt } = tournament
+        const now = new Date()
+        if (now > new Date(startAt) && now < new Date(endAt)) {
+          await tournament.updateOne({ $set: { status: ETournamentStatus.ONGOING } })
+        }
+        if (now > new Date(endAt)) {
+          await tournament.updateOne({ $set: { status: ETournamentStatus.FINISHED } })
+        }
+      }
+    })
   }
 
   static async validate(id: string | Types.ObjectId) {
@@ -35,8 +49,25 @@ class TournamentController extends BaseController {
         )
       }
       await BranchController.validate(branch as string)
+      const existingTournaments = await TournamentModel.find({
+        branch,
+        $or: [
+          {
+            startAt: { $gt: startAt },
+            endAt: { $lt: endAt }
+          },
+          { startAt: { $lt: endAt }, endAt: { $gt: startAt } }
+        ]
+      })
+
+      if (existingTournaments.length > 0) {
+        return Promise.reject(
+          new CustomError("Đã có giải đấu được tạo trong khoảng thời gian này", HttpStatusCode.BAD_REQUEST)
+        )
+      }
       const tournament = await TournamentModel.create(body)
-      return tournament
+      const tournamentPopulated = await tournament.populate("prize", "-description -branch")
+      return tournamentPopulated
     })
   }
 
@@ -87,6 +118,7 @@ class TournamentController extends BaseController {
 
   static async getAll() {
     return await super.handleResponse(async () => {
+      await this.preFind()
       const tournament = await TournamentModel.find()
       return tournament
     })
@@ -105,6 +137,35 @@ class TournamentController extends BaseController {
         .select("jointTournaments")
         .populate("jointTournaments", "_id name images startAt endAt branch")
       return tournaments
+    })
+  }
+
+  static async getTournamentsOfBranch(branch_id: string | Types.ObjectId) {
+    await this.preFind()
+    return await super.handleResponse(async () => {
+      const tournaments = await TournamentModel.find(
+        { branch: branch_id },
+        {
+          description: 0,
+          branch: 0,
+          timelines: 0
+        },
+        {
+          populate: {
+            path: "prize",
+            select: "-description -branch"
+          }
+        }
+      )
+      return tournaments
+    })
+  }
+
+  static async delete(id: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const tournament = await TournamentModel.findByIdAndDelete(id)
+      if (!tournament) return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return tournament
     })
   }
 }

@@ -2,6 +2,7 @@ import { PaginateModel, Schema, model } from "mongoose"
 import { SCHEMA } from "./schema-name"
 import mongoosePaginate from "mongoose-paginate-v2"
 import { ITournament } from "../interface"
+import { ETournamentStatus } from "../enum"
 
 const TournamentModel = new Schema<ITournament>(
   {
@@ -46,7 +47,12 @@ const TournamentModel = new Schema<ITournament>(
         type: Schema.Types.ObjectId,
         ref: SCHEMA.MATCHES
       }
-    ]
+    ],
+    status: {
+      type: String,
+      enum: Object.values(ETournamentStatus),
+      default: ETournamentStatus.UPCOMING
+    }
   },
   {
     timestamps: true,
