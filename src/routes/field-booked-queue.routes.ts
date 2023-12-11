@@ -40,11 +40,7 @@ class FieldBookedQueueRoutes implements IRouter {
       AuthMiddleware.verifyRoles([ERole.OWNER]),
       FieldBookedQueueRoutes.getFieldBookedQueueById
     )
-    this.router.get(
-      this.PATHS.FIELD,
-      AuthMiddleware.verifyRoles([ERole.OWNER]),
-      FieldBookedQueueRoutes.getFieldBookedQueueByField
-    )
+    this.router.get(this.PATHS.FIELD, FieldBookedQueueRoutes.getFieldBookedQueueByField)
     this.router.put(
       this.PATHS.STATUS,
       AuthMiddleware.verifyRoles([ERole.OWNER, ERole.GUEST]),

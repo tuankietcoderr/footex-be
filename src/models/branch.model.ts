@@ -13,7 +13,8 @@ const BranchModel = new Schema<IBranch>(
       type: [String]
     },
     logo: {
-      type: String
+      type: String,
+      default: null
     },
     description: {
       type: String

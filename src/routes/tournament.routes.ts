@@ -11,6 +11,7 @@ class TournamentRoutes implements IRouter {
   private readonly PATHS = {
     ROOT: this.path,
     ID: `${this.path}/:id`,
+    HAPPENING: `${this.path}/happening`,
     GUEST_JOINT: `${this.path}/joint`,
     TEAM: `${this.path}/team/:teamId`,
     JOIN: `${this.path}/:id/join`,
@@ -35,6 +36,7 @@ class TournamentRoutes implements IRouter {
       AuthMiddleware.verifyRoles([ERole.OWNER]),
       TournamentRoutes.removeTeamFromTournament
     )
+    this.router.get(this.PATHS.HAPPENING, TournamentRoutes.getHappeningTournaments)
     this.router.get(this.PATHS.ID, TournamentRoutes.getTournamentById)
     this.router.post(this.PATHS.JOIN, AuthMiddleware.verifyRoles([ERole.GUEST]), TournamentRoutes.joinTournament)
     this.router.get(this.PATHS.BRANCH, TournamentRoutes.getBranchsTournaments)
@@ -43,7 +45,7 @@ class TournamentRoutes implements IRouter {
 
   static async getAllTournaments(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await TournamentController.getAll()
+      const { data } = await TournamentController.getAll(req.query)
       return ResponseHelper.successfulResponse(res, "Lấy danh sách giải đấu thành công!", HttpStatusCode.OK, { data })
     })
   }
@@ -52,6 +54,13 @@ class TournamentRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await TournamentController.getById(req.params.id)
       return ResponseHelper.successfulResponse(res, "Lấy thông tin giải đấu thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async getHappeningTournaments(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await TournamentController.getHappenningTournaments()
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách giải đấu thành công!", HttpStatusCode.OK, { data })
     })
   }
 

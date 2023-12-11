@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express"
 import { FieldController } from "../controllers"
 import { ERole } from "../enum"
 import { HttpStatusCode, ResponseHelper } from "../helper"
-import { IField, IRouter } from "../interface"
+import { IAddress, IField, IRouter } from "../interface"
 import { AuthMiddleware, BodyFieldMiddleware } from "../middleware"
 
 class FieldRoutes implements IRouter {
@@ -13,6 +13,7 @@ class FieldRoutes implements IRouter {
     ROOT: this.path,
     ID: `${this.path}/:id`,
     BRANCH: `${this.path}/branch/:id`,
+    NEAR_BY: `${this.path}/near-by/branch/:id`,
     STATUS: `${this.path}/:id/status`
   }
 
@@ -24,6 +25,7 @@ class FieldRoutes implements IRouter {
     this.router.get(this.PATHS.ROOT, FieldRoutes.getAllFields)
     this.router.get(this.PATHS.ID, FieldRoutes.getFieldById)
     this.router.get(this.PATHS.BRANCH, FieldRoutes.getBranchsField)
+    this.router.get(this.PATHS.NEAR_BY, FieldRoutes.getNearByFields)
     this.router.post(
       this.PATHS.ROOT,
       AuthMiddleware.verifyRoles([ERole.OWNER]),
@@ -41,7 +43,7 @@ class FieldRoutes implements IRouter {
 
   static async getAllFields(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await FieldController.getAll()
+      const { data } = await FieldController.getAll(req.query)
       return ResponseHelper.successfulResponse(res, "Lấy danh sách sân bóng thành công!", HttpStatusCode.OK, { data })
     })
   }
@@ -56,6 +58,13 @@ class FieldRoutes implements IRouter {
   static async getBranchsField(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await FieldController.getBranchsField(req.params.id)
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách sân bóng thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async getNearByFields(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await FieldController.getFieldsNearBranchAddress(req.params.id, req.query as any as IAddress)
       return ResponseHelper.successfulResponse(res, "Lấy danh sách sân bóng thành công!", HttpStatusCode.OK, { data })
     })
   }

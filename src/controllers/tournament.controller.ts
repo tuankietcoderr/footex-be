@@ -6,6 +6,7 @@ import { TeamModel, TournamentModel } from "../models"
 import BaseController from "./base.controller"
 import BranchController from "./branch.controller"
 import TeamController from "./team.controller"
+import { SCHEMA } from "../models/schema-name"
 
 class TournamentController extends BaseController {
   constructor() {
@@ -30,9 +31,16 @@ class TournamentController extends BaseController {
 
   static async validate(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const tournament = await TournamentModel.findById(id)
+      const tournament = await TournamentModel.findById(id, {}, {})
       if (!tournament) return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
       return tournament
+    })
+  }
+
+  static async getHappenningTournaments() {
+    return await super.handleResponse(async () => {
+      const tournaments = await TournamentModel.find({ status: ETournamentStatus.ONGOING })
+      return tournaments
     })
   }
 
@@ -116,11 +124,105 @@ class TournamentController extends BaseController {
     })
   }
 
-  static async getAll() {
+  static async getAll(queries?: any) {
     return await super.handleResponse(async () => {
       await this.preFind()
-      const tournament = await TournamentModel.find()
-      return tournament
+      const { city, district, ward, status, keyword } = queries
+      const queryKeys = Object.keys(queries)
+      const keywordKeyIndex = queryKeys.indexOf("keyword")
+      if (keywordKeyIndex !== -1) queryKeys.splice(keywordKeyIndex, 1)
+
+      let fields = []
+
+      if (keyword) {
+        fields = await TournamentModel.find(
+          {
+            name: { $regex: keyword, $options: "i" }
+          },
+          {
+            branch: 1,
+            name: 1,
+            prize: 1,
+            status: 1,
+            startAt: 1,
+            endAt: 1,
+            teams: 1,
+            images: 1
+          }
+        )
+      } else {
+        fields = await TournamentModel.aggregate([
+          {
+            $lookup: {
+              from: SCHEMA.BRANCHES,
+              localField: "branch",
+              foreignField: "_id",
+              as: "branch"
+            }
+          },
+          {
+            $unwind: "$branch"
+          },
+          {
+            $lookup: {
+              from: SCHEMA.PRIZES,
+              localField: "prize",
+              foreignField: "_id",
+              as: "prize",
+              pipeline: [
+                {
+                  $project: {
+                    image: 1,
+                    name: 1,
+                    value: 1,
+                    winners: 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            $unwind: "$prize"
+          },
+          {
+            $match:
+              queryKeys.length > 0
+                ? {
+                    $and: [
+                      {
+                        ...(city && {
+                          "branch.city": { $eq: city }
+                        })
+                      },
+                      {
+                        ...(district && { "branch.district": { $eq: district } })
+                      },
+                      {
+                        ...(ward && { "branch.ward": { $eq: ward } })
+                      },
+                      {
+                        ...(status !== "all" && { status })
+                      }
+                    ]
+                  }
+                : {}
+          },
+          {
+            //! TODO: project
+            $project: {
+              branch: "$branch._id",
+              name: 1,
+              prize: 1,
+              status: 1,
+              startAt: 1,
+              endAt: 1,
+              teams: 1,
+              images: 1
+            }
+          }
+        ])
+      }
+      return fields
     })
   }
 
