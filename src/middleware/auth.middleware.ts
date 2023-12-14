@@ -8,7 +8,6 @@ class AuthMiddleware {
     return async function (req: Request, res: Response, next: NextFunction) {
       const authHeader = req.header("Authorization")
       const token = authHeader && authHeader.split(" ")[1]
-
       if (!token) {
         return ResponseHelper.errorResponse(res, `Không có token nào được cung cấp`, HttpStatusCode.FORBIDDEN)
       }

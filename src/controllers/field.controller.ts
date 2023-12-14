@@ -52,7 +52,14 @@ class FieldController extends BaseController {
             price: 1,
             image: 1,
             status: 1,
-            type: 1
+            type: 1,
+            branch: 1
+          },
+          {
+            populate: {
+              path: "branch",
+              select: "-description"
+            }
           }
         )
       } else {
@@ -100,12 +107,12 @@ class FieldController extends BaseController {
           {
             //! TODO: project
             $project: {
-              branch: "$branch._id",
               name: 1,
               price: 1,
               image: 1,
               status: 1,
-              type: 1
+              type: 1,
+              branch: 1
             }
           }
         ])
@@ -129,6 +136,17 @@ class FieldController extends BaseController {
             localField: "branch",
             foreignField: "_id",
             as: "branch",
+            pipeline: [
+              {
+                $project: {
+                  city: 1,
+                  district: 1,
+                  ward: 1,
+                  street: 1,
+                  houseNumber: 1
+                }
+              }
+            ]
           }
         },
         {
@@ -151,7 +169,7 @@ class FieldController extends BaseController {
         },
         {
           $project: {
-            branch: "$branch._id",
+            branch: 1,
             name: 1,
             price: 1,
             image: 1,

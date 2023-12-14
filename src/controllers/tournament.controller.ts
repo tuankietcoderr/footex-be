@@ -39,7 +39,16 @@ class TournamentController extends BaseController {
 
   static async getHappenningTournaments() {
     return await super.handleResponse(async () => {
-      const tournaments = await TournamentModel.find({ status: ETournamentStatus.ONGOING })
+      const tournaments = await TournamentModel.find(
+        { status: ETournamentStatus.ONGOING },
+        {},
+        {
+          populate: {
+            path: "prize",
+            select: "-description -branch"
+          }
+        }
+      )
       return tournaments
     })
   }

@@ -43,7 +43,7 @@ class BranchRoutes implements IRouter {
 
   static async getAllBranches(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await BranchController.getAllBranches()
+      const { data } = await BranchController.getAllBranches(req.query)
       return ResponseHelper.successfulResponse(res, "Lấy danh sách sân bóng thành công!", HttpStatusCode.OK, { data })
     })
   }

@@ -20,21 +20,13 @@ class FieldBookedQueueRoutes implements IRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.post(
-      this.PATHS.ROOT,
-      AuthMiddleware.verifyRoles([ERole.OWNER, ERole.GUEST]),
-      FieldBookedQueueRoutes.createFieldBookedQueue
-    )
+    this.router.post(this.PATHS.ROOT, AuthMiddleware.verifyRoles(), FieldBookedQueueRoutes.createFieldBookedQueue)
     this.router.put(
       this.PATHS.ID,
       AuthMiddleware.verifyRoles([ERole.OWNER]),
       FieldBookedQueueRoutes.updateFieldBookedQueueInfo
     )
-    this.router.get(
-      this.PATHS.GUEST,
-      AuthMiddleware.verifyRoles([ERole.OWNER, ERole.GUEST]),
-      FieldBookedQueueRoutes.getGuestFieldBookedQueue
-    )
+    this.router.get(this.PATHS.GUEST, AuthMiddleware.verifyRoles(), FieldBookedQueueRoutes.getGuestFieldBookedQueue)
     this.router.get(
       this.PATHS.ID,
       AuthMiddleware.verifyRoles([ERole.OWNER]),
@@ -43,14 +35,10 @@ class FieldBookedQueueRoutes implements IRouter {
     this.router.get(this.PATHS.FIELD, FieldBookedQueueRoutes.getFieldBookedQueueByField)
     this.router.put(
       this.PATHS.STATUS,
-      AuthMiddleware.verifyRoles([ERole.OWNER, ERole.GUEST]),
+      AuthMiddleware.verifyRoles(),
       FieldBookedQueueRoutes.updateFieldBookedQueueStatus
     )
-    this.router.delete(
-      this.PATHS.ID,
-      AuthMiddleware.verifyRoles([ERole.OWNER]),
-      FieldBookedQueueRoutes.deleteFieldBookedQueue
-    )
+    this.router.delete(this.PATHS.ID, AuthMiddleware.verifyRoles(), FieldBookedQueueRoutes.deleteFieldBookedQueue)
   }
 
   static async createFieldBookedQueue(req: Request, res: Response) {

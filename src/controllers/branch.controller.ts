@@ -9,9 +9,54 @@ class BranchController extends BaseController {
   constructor() {
     super()
   }
-  static async getAllBranches() {
+  static async getAllBranches(queries?: any) {
     return await super.handleResponse(async () => {
-      const branches = await BranchModel.find()
+      const { city, district, ward, keyword, openAt, closeAt } = queries
+      console.log({ queries })
+      const queryKeys = Object.keys(queries)
+      const keywordKeyIndex = queryKeys.indexOf("keyword")
+      if (keywordKeyIndex !== -1) queryKeys.splice(keywordKeyIndex, 1)
+      const open = parseInt(openAt ?? 0)
+      const close = parseInt(closeAt ?? 0)
+
+      let branches = []
+
+      if (keyword) {
+        branches = await BranchModel.find(
+          {
+            $or: [{ name: { $regex: keyword, $options: "i" } }, { phoneNumber: { $regex: keyword, $options: "i" } }]
+          },
+          {
+            description: 0,
+            owner: 0,
+            images: 0,
+            createdAt: 0,
+            updatedAt: 0
+          }
+        )
+      } else {
+        branches = await BranchModel.find(
+          queryKeys.length > 0
+            ? {
+                $and: [
+                  { openAt: { $lte: open } },
+                  { closeAt: { $gte: close } },
+                  { status: EBranchStatus.ACTIVE },
+                  { ...(city && { city: { $eq: city } }) },
+                  { ...(district && { district: { $eq: district } }) },
+                  { ...(ward && { ward: { $eq: ward } }) }
+                ]
+              }
+            : {},
+          {
+            description: 0,
+            owner: 0,
+            images: 0,
+            createdAt: 0,
+            updatedAt: 0
+          }
+        )
+      }
       return branches
     })
   }

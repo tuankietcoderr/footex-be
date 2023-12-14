@@ -32,9 +32,9 @@ enum ETeamStatus {
 }
 
 enum ERate {
-  TEAM = "team",
-  FIELD = "field",
-  BRANCH = "branch"
+  TEAM = "teams",
+  FIELD = "fields",
+  BRANCH = "branches"
 }
 
 enum ECard {
