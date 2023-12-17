@@ -69,7 +69,18 @@ class FieldController extends BaseController {
               from: SCHEMA.BRANCHES,
               localField: "branch",
               foreignField: "_id",
-              as: "branch"
+              as: "branch",
+              pipeline: [
+                {
+                  $project: {
+                    ward: 1,
+                    district: 1,
+                    city: 1,
+                    houseNumber: 1,
+                    street: 1
+                  }
+                }
+              ]
             }
           },
           {
@@ -185,7 +196,23 @@ class FieldController extends BaseController {
   static async getBranchsField(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       await BranchController.validate(id)
-      const fields = await FieldModel.find({ branch: id })
+      const fields = await FieldModel.find(
+        { branch: id },
+        {
+          name: 1,
+          price: 1,
+          image: 1,
+          status: 1,
+          type: 1,
+          branch: 1
+        },
+        {
+          populate: {
+            path: "branch",
+            select: "ward district city street houseNumber"
+          }
+        }
+      )
       return fields
     })
   }

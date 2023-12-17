@@ -12,7 +12,7 @@ class TeamRoutes implements IRouter {
     ROOT: this.path,
     ID: `${this.path}/:id`,
     CAPTAIN: `${this.path}/captain`,
-    GUEST: `${this.path}/guest`,
+    GUEST: `${this.path}/guest/:id`,
     LEAVE: `${this.path}/:teamId/leave`,
     KICK: `${this.path}/:teamId/kick`
   }
@@ -28,18 +28,18 @@ class TeamRoutes implements IRouter {
       BodyFieldMiddleware.mustHaveFields<ITeam>("name"),
       TeamRoutes.createTeam
     )
-    this.router.get(this.PATHS.ID, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.getTeamById)
     this.router.put(
       this.PATHS.ID,
       AuthMiddleware.verifyRoles([ERole.GUEST]),
       BodyFieldMiddleware.doNotAllowFields<ITeam>("captain", "status", "members"),
       TeamRoutes.updateTeamInfo
     )
-    this.router.get(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.getTeams)
+    this.router.get(this.PATHS.ROOT, TeamRoutes.getTeams)
     this.router.get(this.PATHS.CAPTAIN, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.getCaptainTeams)
-    this.router.get(this.PATHS.GUEST, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.getGuestJointTeams)
+    this.router.get(this.PATHS.GUEST, TeamRoutes.getGuestJointTeams)
     this.router.delete(this.PATHS.ID, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.deleteTeam)
     this.router.delete(this.PATHS.LEAVE, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.leaveTeam)
+    this.router.get(this.PATHS.ID, TeamRoutes.getTeamById)
   }
 
   static async createTeam(req: Request, res: Response) {
@@ -67,7 +67,7 @@ class TeamRoutes implements IRouter {
 
   static async getTeams(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await TeamController.getAll()
+      const { data } = await TeamController.getAll(req.query)
       return ResponseHelper.successfulResponse(res, "Lấy danh sách đội bóng thành công!", HttpStatusCode.OK, { data })
     })
   }
@@ -95,7 +95,7 @@ class TeamRoutes implements IRouter {
 
   static async getGuestJointTeams(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await TeamController.getGuestJointTeams(req.userId)
+      const { data } = await TeamController.getGuestJointTeams(req.params.id)
       return ResponseHelper.successfulResponse(res, "Lấy danh sách đội bóng thành công!", HttpStatusCode.OK, { data })
     })
   }

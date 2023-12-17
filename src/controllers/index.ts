@@ -16,6 +16,7 @@ import MatchResultController from "./match-result.controller"
 import MatchResultDetailController from "./match-result-detail.controller"
 import GoalDetailController from "./goal-detail.controller"
 import CardFineController from "./card-fine.controller"
+import ReportController from "./report.controller"
 
 export {
   CredentialController,
@@ -35,5 +36,6 @@ export {
   MatchResultController,
   MatchResultDetailController,
   GoalDetailController,
-  CardFineController
+  CardFineController,
+  ReportController
 }

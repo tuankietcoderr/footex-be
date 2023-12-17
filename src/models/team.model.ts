@@ -8,15 +8,15 @@ const TeamModel = new Schema<ITeam>(
   {
     captain: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.USERS
+      ref: SCHEMA.GUESTS
     },
     description: {
       type: String,
       default: null
     },
-    image: {
-      type: String,
-      default: null
+    images: {
+      type: [String],
+      default: []
     },
     logo: {
       type: String,
@@ -41,6 +41,12 @@ const TeamModel = new Schema<ITeam>(
       {
         type: Schema.Types.ObjectId,
         ref: SCHEMA.TOURNAMENTS
+      }
+    ],
+    joinRequests: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: SCHEMA.INVITEMENTS
       }
     ]
   },

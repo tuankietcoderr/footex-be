@@ -8,11 +8,11 @@ const InviteModel = new Schema<IInvitement>(
   {
     from: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.USERS
+      ref: SCHEMA.GUESTS
     },
     to: {
       type: Schema.Types.ObjectId,
-      ref: SCHEMA.USERS
+      ref: SCHEMA.GUESTS
     },
     team: {
       type: Schema.Types.ObjectId,
@@ -22,6 +22,10 @@ const InviteModel = new Schema<IInvitement>(
       type: String,
       enum: Object.values(EInvitementStatus),
       default: EInvitementStatus.PENDING
+    },
+    isJoinRequest: {
+      type: Boolean,
+      default: false
     }
   },
   {

@@ -15,6 +15,7 @@ import MatchResultRoutes from "./match-result.routes"
 import MatchResultDetailRoutes from "./match-result-detail.routes"
 import GoalDetailRoutes from "./goal-detail.routes"
 import CardFineRoutes from "./card-fine.routes"
+import ReportRoutes from "./report.routes"
 
 export {
   ExpressRoutes,
@@ -33,5 +34,6 @@ export {
   MatchResultRoutes,
   MatchResultDetailRoutes,
   GoalDetailRoutes,
-  CardFineRoutes
+  CardFineRoutes,
+  ReportRoutes
 }

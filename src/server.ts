@@ -18,6 +18,7 @@ import {
   OwnerRoutes,
   PrizeRoutes,
   RateRoutes,
+  ReportRoutes,
   TeamRoutes,
   TournamentRoutes
 } from "./routes"
@@ -38,7 +39,8 @@ const routes: IRouter[] = [
   new MatchResultRoutes(),
   new MatchResultDetailRoutes(),
   new GoalDetailRoutes(),
-  new CardFineRoutes()
+  new CardFineRoutes(),
+  new ReportRoutes()
 ]
 
 const app = new App(routes, Number(process.env.PORT || 2003))

@@ -13,25 +13,40 @@ class TournamentController extends BaseController {
     super()
   }
 
-  static async preFind() {
-    return await super.handleResponse(async () => {
-      const tournaments = await TournamentModel.find()
-      for (const tournament of tournaments) {
-        const { _id, startAt, endAt } = tournament
-        const now = new Date()
-        if (now > new Date(startAt) && now < new Date(endAt)) {
-          await tournament.updateOne({ $set: { status: ETournamentStatus.ONGOING } })
-        }
-        if (now > new Date(endAt)) {
-          await tournament.updateOne({ $set: { status: ETournamentStatus.FINISHED } })
-        }
-      }
-    })
-  }
+  // static async preFind() {
+  //   return await super.handleResponse(async () => {
+  //     const tournaments = await TournamentModel.find()
+  //     for (const tournament of tournaments) {
+  //       const { _id, startAt, endAt } = tournament
+  //       const now = new Date()
+  //       if (now > new Date(startAt) && now < new Date(endAt)) {
+  //         await tournament.updateOne({ $set: { status: ETournamentStatus.ONGOING } })
+  //       }
+  //       if (now > new Date(endAt)) {
+  //         await tournament.updateOne({ $set: { status: ETournamentStatus.FINISHED } })
+  //       }
+  //     }
+  //   })
+  // }
 
   static async validate(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const tournament = await TournamentModel.findById(id, {}, {})
+      const tournament = await TournamentModel.findById(
+        id,
+        {},
+        {
+          populate: [
+            {
+              path: "prize",
+              select: "-description -branch -createdAt -updatedAt"
+            },
+            {
+              path: "branch",
+              select: "logo name ward district city street"
+            }
+          ]
+        }
+      )
       if (!tournament) return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
       return tournament
     })
@@ -41,12 +56,21 @@ class TournamentController extends BaseController {
     return await super.handleResponse(async () => {
       const tournaments = await TournamentModel.find(
         { status: ETournamentStatus.ONGOING },
-        {},
         {
-          populate: {
-            path: "prize",
-            select: "-description -branch"
-          }
+          description: 0,
+          timelines: 0
+        },
+        {
+          populate: [
+            {
+              path: "prize",
+              select: "-description -branch -createdAt -updatedAt"
+            },
+            {
+              path: "branch",
+              select: "logo name ward district city street"
+            }
+          ]
         }
       )
       return tournaments
@@ -101,6 +125,14 @@ class TournamentController extends BaseController {
     })
   }
 
+  static async getTournamentMatches(id: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const { data: tournament } = await this.validate(id)
+      const { timelines } = tournament
+      return timelines
+    })
+  }
+
   static async removeTeam(id: string | Types.ObjectId, team: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const tournament = await TournamentModel.findById(id)
@@ -135,7 +167,7 @@ class TournamentController extends BaseController {
 
   static async getAll(queries?: any) {
     return await super.handleResponse(async () => {
-      await this.preFind()
+      // await this.preFind()
       const { city, district, ward, status, keyword } = queries
       const queryKeys = Object.keys(queries)
       const keywordKeyIndex = queryKeys.indexOf("keyword")
@@ -157,6 +189,18 @@ class TournamentController extends BaseController {
             endAt: 1,
             teams: 1,
             images: 1
+          },
+          {
+            populate: [
+              {
+                path: "prize",
+                select: "-description -branch -createdAt -updatedAt"
+              },
+              {
+                path: "branch",
+                select: "logo name ward district city street"
+              }
+            ]
           }
         )
       } else {
@@ -166,7 +210,19 @@ class TournamentController extends BaseController {
               from: SCHEMA.BRANCHES,
               localField: "branch",
               foreignField: "_id",
-              as: "branch"
+              as: "branch",
+              pipeline: [
+                {
+                  $project: {
+                    logo: 1,
+                    name: 1,
+                    ward: 1,
+                    district: 1,
+                    city: 1,
+                    street: 1
+                  }
+                }
+              ]
             }
           },
           {
@@ -219,7 +275,7 @@ class TournamentController extends BaseController {
           {
             //! TODO: project
             $project: {
-              branch: "$branch._id",
+              branch: 1,
               name: 1,
               prize: 1,
               status: 1,
@@ -241,7 +297,6 @@ class TournamentController extends BaseController {
 
   static async getGuestJointTournament(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      console.log({ id })
       const tournaments = await TeamModel.find({
         $or: [{ members: { $elemMatch: { $eq: id } } }, { captain: id }]
       })
@@ -252,20 +307,25 @@ class TournamentController extends BaseController {
   }
 
   static async getTournamentsOfBranch(branch_id: string | Types.ObjectId) {
-    await this.preFind()
+    // await this.preFind()
     return await super.handleResponse(async () => {
       const tournaments = await TournamentModel.find(
         { branch: branch_id },
         {
           description: 0,
-          branch: 0,
           timelines: 0
         },
         {
-          populate: {
-            path: "prize",
-            select: "-description -branch"
-          }
+          populate: [
+            {
+              path: "prize",
+              select: "-description -branch -createdAt -updatedAt"
+            },
+            {
+              path: "branch",
+              select: "logo name ward district city street"
+            }
+          ]
         }
       )
       return tournaments

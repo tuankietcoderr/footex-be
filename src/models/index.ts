@@ -14,6 +14,7 @@ import GoalDetailModel from "./goal-detail.model"
 import PrizeModel from "./prize.model"
 import RateModel from "./rate.model"
 import CardFineModel from "./card-fine.model"
+import ReportModel from "./report.model"
 
 export {
   BranchModel,
@@ -31,5 +32,6 @@ export {
   GoalDetailModel,
   PrizeModel,
   RateModel,
-  CardFineModel
+  CardFineModel,
+  ReportModel
 }

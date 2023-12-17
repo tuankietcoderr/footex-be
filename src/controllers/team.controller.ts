@@ -4,6 +4,7 @@ import { TeamModel } from "../models"
 import BaseController from "./base.controller"
 import { CustomError, HttpStatusCode } from "../helper"
 import { ETeamStatus } from "../enum"
+import { SCHEMA } from "../models/schema-name"
 
 class TeamController extends BaseController {
   constructor() {
@@ -12,15 +13,138 @@ class TeamController extends BaseController {
 
   static async validate(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const team = await TeamModel.findById(id)
+      const team = await TeamModel.findById(
+        id,
+        {},
+        {
+          populate: [
+            {
+              path: "captain",
+              select: "district city ward houseNumber street name"
+            },
+            {
+              path: "members",
+              select: "district city ward houseNumber street name email phoneNumber"
+            },
+            {
+              path: "jointTournaments",
+              select: "name"
+            },
+            {
+              path: "joinRequests",
+              select: "from"
+            }
+          ]
+        }
+      )
       if (!team) return Promise.reject(new CustomError("Team không tồn tại", HttpStatusCode.BAD_REQUEST))
       return team
     })
   }
 
-  static async getAll() {
+  static async getAll(queries?: any) {
     return await super.handleResponse(async () => {
-      const teams = await TeamModel.find()
+      const { city, district, ward, keyword } = queries
+      const queryKeys = Object.keys(queries)
+      const keywordKeyIndex = queryKeys.indexOf("keyword")
+      if (keywordKeyIndex !== -1) queryKeys.splice(keywordKeyIndex, 1)
+
+      let teams = []
+
+      if (keyword) {
+        teams = await TeamModel.find(
+          {
+            name: { $regex: keyword, $options: "i" }
+          },
+          {
+            createdAt: 0,
+            updatedAt: 0,
+            images: 0,
+            description: 0
+          },
+          {
+            populate: [
+              {
+                path: "captain",
+                select: "district city ward houseNumber street"
+              },
+              {
+                path: "joinRequests",
+                select: "from"
+              }
+            ]
+          }
+        )
+      } else {
+        teams = await TeamModel.aggregate([
+          {
+            $lookup: {
+              from: SCHEMA.GUESTS,
+              localField: "captain",
+              foreignField: "_id",
+              as: "captain",
+              pipeline: [
+                {
+                  $project: {
+                    district: 1,
+                    city: 1,
+                    ward: 1,
+                    houseNumber: 1,
+                    street: 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            $unwind: "$captain"
+          },
+          {
+            $lookup: {
+              from: SCHEMA.INVITEMENTS,
+              localField: "joinRequests",
+              foreignField: "_id",
+              as: "joinRequests",
+              pipeline: [
+                {
+                  $project: {
+                    from: 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            $match:
+              queryKeys.length > 0
+                ? {
+                    $and: [
+                      {
+                        ...(city && {
+                          "captain.city": { $eq: city }
+                        })
+                      },
+                      {
+                        ...(district && { "captain.district": { $eq: district } })
+                      },
+                      {
+                        ...(ward && { "captain.ward": { $eq: ward } })
+                      }
+                    ]
+                  }
+                : {}
+          },
+          {
+            //! TODO: project
+            $project: {
+              createdAt: 0,
+              updatedAt: 0,
+              images: 0,
+              description: 0
+            }
+          }
+        ])
+      }
       return teams
     })
   }
@@ -49,6 +173,22 @@ class TeamController extends BaseController {
       const team = await TeamModel.findByIdAndUpdate(id, { $set: { status } }, { new: true, runValidators: true })
       if (!team) return Promise.reject(new CustomError("Team không tồn tại", HttpStatusCode.BAD_REQUEST))
       return team
+    })
+  }
+
+  static async addMember(id: string | Types.ObjectId, member: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const res = await TeamModel.findByIdAndUpdate(id, { $push: { members: member } }, { new: true })
+      if (!res) return Promise.reject(new CustomError("Team không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return res
+    })
+  }
+
+  static async kickMember(id: string | Types.ObjectId, member: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const res = await TeamModel.findByIdAndUpdate(id, { $pull: { members: member } }, { new: true })
+      if (!res) return Promise.reject(new CustomError("Team không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return res
     })
   }
 

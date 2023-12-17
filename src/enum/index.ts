@@ -45,7 +45,8 @@ enum ECard {
 enum EInvitementStatus {
   PENDING = "pending",
   APPROVED = "approved",
-  DECLINED = "declined"
+  DECLINED = "declined",
+  DELETED = "deleted"
 }
 
 enum EOwnerStatus {
@@ -68,6 +69,12 @@ enum ETournamentStatus {
   UPCOMING = "upcoming"
 }
 
+enum EReportStatus {
+  PENDING = "pending",
+  RESOLVED = "resolved",
+  REJECTED = "rejected"
+}
+
 export {
   ERole,
   EFieldStatus,
@@ -79,5 +86,6 @@ export {
   EOwnerStatus,
   EGuestStatus,
   ECard,
-  ETournamentStatus
+  ETournamentStatus,
+  EReportStatus
 }

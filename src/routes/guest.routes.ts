@@ -15,9 +15,11 @@ class GuestRoutes implements IRouter {
     SIGN_UP: `${this.path}/signup`,
     VERIFY_EMAIL: `${this.path}/verify-email`,
     SEND_VERIFY_EMAIL: `${this.path}/send-verify-email`,
-    FORGOT_PASSWORD: `${this.path}/forgot-password`,
+    FORGOT_PASSWORD: `${this.path}/password/forgot`,
+    CHANGE_PASSWORD: `${this.path}/password/change`,
     ID: `${this.path}/:id`,
-    PHONE_NUMBER: `${this.path}/phone-number/:phoneNumber`
+    PHONE_NUMBER: `${this.path}/phone-number/:phoneNumber`,
+    AUTHORIZE: `${this.path}/authorize`
   }
 
   constructor() {
@@ -38,6 +40,14 @@ class GuestRoutes implements IRouter {
     this.router.get(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.getCurrentGuest)
     this.router.put(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.updateGuestInfo)
     this.router.get(this.PATHS.PHONE_NUMBER, AuthMiddleware.verifyRoles([ERole.OWNER]), GuestRoutes.getByPhoneNumber)
+    this.router.get(this.PATHS.AUTHORIZE, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.authorize)
+    this.router.get(this.PATHS.ID, GuestRoutes.getById)
+    this.router.put(
+      this.PATHS.CHANGE_PASSWORD,
+      AuthMiddleware.verifyRoles([ERole.GUEST]),
+      BodyFieldMiddleware.mustHaveFields("oldPassword", "newPassword"),
+      GuestRoutes.changePassword
+    )
   }
 
   private static async signUp(req: Request, res: Response) {
@@ -85,6 +95,13 @@ class GuestRoutes implements IRouter {
     })
   }
 
+  private static async changePassword(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      await GuestController.changePassword(req.userId, req.body)
+      return ResponseHelper.successfulResponse(res, "Đổi mật khẩu thành công!", HttpStatusCode.OK)
+    })
+  }
+
   private static async getCurrentGuest(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await GuestController.getById(req.userId)
@@ -94,7 +111,7 @@ class GuestRoutes implements IRouter {
 
   private static async updateGuestInfo(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await GuestController.updateInfo(req.params.id, req.body)
+      const { data } = await GuestController.updateInfo(req.userId, req.body)
       return ResponseHelper.successfulResponse(res, "Cập nhật thông tin khách hàng thành công!", HttpStatusCode.OK, {
         data
       })
@@ -104,6 +121,20 @@ class GuestRoutes implements IRouter {
   private static async getByPhoneNumber(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await GuestController.getByPhoneNumber(req.params.phoneNumber)
+      return ResponseHelper.successfulResponse(res, "Lấy thông tin khách hàng thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  private static async authorize(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await GuestController.authorize(req.userId)
+      return ResponseHelper.successfulResponse(res, "Xác thực thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  private static async getById(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await GuestController.getById(req.params.id)
       return ResponseHelper.successfulResponse(res, "Lấy thông tin khách hàng thành công!", HttpStatusCode.OK, { data })
     })
   }

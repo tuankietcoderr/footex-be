@@ -8,4 +8,5 @@ export default interface IInvitement {
   to: Types.ObjectId | string | IGuest
   status: EInvitementStatus
   team: Types.ObjectId | string | ITeam
+  isJoinRequest: boolean
 }

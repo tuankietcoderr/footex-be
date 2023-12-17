@@ -27,6 +27,11 @@ class FieldBookedQueueController extends BaseController {
           new CustomError("Ngày bắt đầu không được lớn hơn ngày kết thúc", HttpStatusCode.BAD_REQUEST)
         )
       }
+      if (new Date(startAt) < new Date()) {
+        return Promise.reject(
+          new CustomError("Ngày bắt đầu không được nhỏ hơn ngày hiện tại", HttpStatusCode.BAD_REQUEST)
+        )
+      }
       const { data: _field } = await FieldController.validate(field as string)
       const branch = (await _field.populate("branch")).branch as IBranch
 

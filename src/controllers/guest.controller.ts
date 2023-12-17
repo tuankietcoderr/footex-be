@@ -73,6 +73,14 @@ class GuestController extends BaseController {
     return await this.validate(id)
   }
 
+  static async authorize(id: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const guest = await GuestModel.findById(id)
+      if (!guest) return Promise.reject(new CustomError("Guest không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return "Đã xác thực"
+    })
+  }
+
   static async updateInfo(id: string | Types.ObjectId, body: IGuest) {
     return await super.handleResponse(async () => {
       const guest = await GuestModel.findByIdAndUpdate(id, { $set: body }, { new: true })
@@ -115,6 +123,19 @@ class GuestController extends BaseController {
       } = await MailController.sendForgotPasswordEmail(email)
       await CredentialController.getCredential(guest._id)
       await CredentialController.updateCredential(guest._id, hashedPassword)
+    })
+  }
+
+  static async changePassword(id: string | Types.ObjectId, body: { oldPassword: string; newPassword: string }) {
+    return await super.handleResponse(async () => {
+      const { oldPassword, newPassword } = body
+      const guest = await GuestModel.findById(id)
+      if (!guest) return Promise.reject(new CustomError("Guest không tồn tại", HttpStatusCode.BAD_REQUEST))
+      const credential = await CredentialController.getCredential(id)
+      const isMatch = await CredentialController.compare(oldPassword, credential.password)
+      if (!isMatch) return Promise.reject(new CustomError("Mật khẩu cũ không đúng", HttpStatusCode.BAD_REQUEST))
+      const hashedPassword = await CredentialController.hash(newPassword)
+      await CredentialController.updateCredential(id, hashedPassword)
     })
   }
 

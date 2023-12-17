@@ -16,5 +16,6 @@ export const SCHEMA = {
   MATCH_RESULTS_DETAILS: "match_results_details",
   GOAL_DETAILS: "goal_details",
   CARD_FINES: "card_fines",
-  PRIZES: "prizes"
+  PRIZES: "prizes",
+  REPORTS: "reports"
 }

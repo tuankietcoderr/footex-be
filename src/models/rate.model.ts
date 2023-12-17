@@ -32,6 +32,9 @@ const RateModel = new Schema<IRate>(
     timestamps: true,
     versionKey: false
   }
-)
+).pre("find", function (next) {
+  this.sort({ createdAt: -1 })
+  next()
+})
 
 export default model<IRate>(SCHEMA.RATES, RateModel, SCHEMA.RATES)
