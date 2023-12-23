@@ -15,7 +15,8 @@ class OwnerRoutes implements IRouter {
     SIGN_UP: `${this.path}/signup`,
     VERIFY_EMAIL: `${this.path}/verify-email`,
     SEND_VERIFY_EMAIL: `${this.path}/send-verify-email`,
-    FORGOT_PASSWORD: `${this.path}/forgot-password`
+    FORGOT_PASSWORD: `${this.path}/forgot-password`,
+    STATUS: `${this.path}/status`
   }
 
   constructor() {
@@ -34,6 +35,7 @@ class OwnerRoutes implements IRouter {
     this.router.get(this.PATHS.VERIFY_EMAIL, OwnerRoutes.verifyEmail)
     this.router.get(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.OWNER]), OwnerRoutes.getCurrentOwner)
     this.router.post(this.PATHS.FORGOT_PASSWORD, OwnerRoutes.forgotPassword)
+    this.router.get(this.PATHS.STATUS, AuthMiddleware.verifyRoles([ERole.OWNER]), OwnerRoutes.getStatus)
   }
 
   private static async signUp(req: Request, res: Response) {
@@ -54,6 +56,13 @@ class OwnerRoutes implements IRouter {
         data: { accessToken, owner: data }
       } = await OwnerController.signIn(req.body)
       return ResponseHelper.successfulResponse(res, "Đăng nhập thành công!", HttpStatusCode.OK, { data, accessToken })
+    })
+  }
+
+  private static async getStatus(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await OwnerController.getOwnerById(req.userId)
+      return ResponseHelper.successfulResponse(res, "Lấy trạng thái chủ nhà thành công!", HttpStatusCode.OK, { data })
     })
   }
 

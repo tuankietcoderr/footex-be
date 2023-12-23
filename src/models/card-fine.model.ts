@@ -8,20 +8,16 @@ const CardFineModel = new Schema<ICardFine>(
     cards: [
       {
         type: String,
-        enum: Object.values(ECard),
-        default: null
+        enum: Object.values(ECard)
       }
     ],
-    fine: {
-      type: String
+    player: {
+      type: Schema.Types.ObjectId,
+      ref: SCHEMA.GUESTS
     },
     match: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.MATCHES
-    },
-    player: {
-      type: Schema.Types.ObjectId,
-      ref: SCHEMA.GUESTS
     }
   },
   {

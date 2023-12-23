@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express"
-import { IRouter } from "../interface"
+import { IRouter, ITournament } from "../interface"
 import { HttpStatusCode, ResponseHelper } from "../helper"
 import { TournamentController } from "../controllers"
-import { AuthMiddleware } from "../middleware"
+import { AuthMiddleware, BodyFieldMiddleware } from "../middleware"
 import { ERole } from "../enum"
 
 class TournamentRoutes implements IRouter {
@@ -11,6 +11,7 @@ class TournamentRoutes implements IRouter {
   private readonly PATHS = {
     ROOT: this.path,
     ID: `${this.path}/:id`,
+    STATUS: `${this.path}/:id/status`,
     HAPPENING: `${this.path}/happening`,
     GUEST_JOINT: `${this.path}/joint`,
     TEAM: `${this.path}/team/:teamId`,
@@ -31,6 +32,12 @@ class TournamentRoutes implements IRouter {
     )
     this.router.post(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.OWNER]), TournamentRoutes.createTournament)
     this.router.put(this.PATHS.ID, AuthMiddleware.verifyRoles([ERole.OWNER]), TournamentRoutes.updateTournamentInfo)
+    this.router.put(
+      this.PATHS.STATUS,
+      AuthMiddleware.verifyRoles([ERole.OWNER]),
+      BodyFieldMiddleware.mustHaveFields<ITournament>("status"),
+      TournamentRoutes.updateTournamentStatus
+    )
     this.router.delete(
       this.PATHS.TEAM,
       AuthMiddleware.verifyRoles([ERole.OWNER]),
@@ -82,6 +89,15 @@ class TournamentRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await TournamentController.updateInfo(req.params.id, req.body)
       return ResponseHelper.successfulResponse(res, "Cập nhật giải đấu thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async updateTournamentStatus(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await TournamentController.updateStatus(req.params.id, req.body.status)
+      return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái giải đấu thành công!", HttpStatusCode.OK, {
+        data
+      })
     })
   }
 

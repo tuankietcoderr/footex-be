@@ -11,6 +11,7 @@ class GuestRoutes implements IRouter {
 
   private readonly PATHS = {
     ROOT: this.path,
+    EMAIL: `${this.path}/email`,
     SIGN_IN: `${this.path}/signin`,
     SIGN_UP: `${this.path}/signup`,
     VERIFY_EMAIL: `${this.path}/verify-email`,
@@ -18,7 +19,7 @@ class GuestRoutes implements IRouter {
     FORGOT_PASSWORD: `${this.path}/password/forgot`,
     CHANGE_PASSWORD: `${this.path}/password/change`,
     ID: `${this.path}/:id`,
-    PHONE_NUMBER: `${this.path}/phone-number/:phoneNumber`,
+    SEARCH_BY_EMAIL_OR_PHONE_NUMBER: `${this.path}/search/:emailOrPhoneNumber`,
     AUTHORIZE: `${this.path}/authorize`
   }
 
@@ -39,7 +40,12 @@ class GuestRoutes implements IRouter {
     this.router.post(this.PATHS.FORGOT_PASSWORD, GuestRoutes.forgotPassword)
     this.router.get(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.getCurrentGuest)
     this.router.put(this.PATHS.ROOT, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.updateGuestInfo)
-    this.router.get(this.PATHS.PHONE_NUMBER, AuthMiddleware.verifyRoles([ERole.OWNER]), GuestRoutes.getByPhoneNumber)
+    this.router.put(this.PATHS.EMAIL, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.updateGuestEmail)
+    this.router.get(
+      this.PATHS.SEARCH_BY_EMAIL_OR_PHONE_NUMBER,
+      AuthMiddleware.verifyRoles(),
+      GuestRoutes.getByPhoneNumber
+    )
     this.router.get(this.PATHS.AUTHORIZE, AuthMiddleware.verifyRoles([ERole.GUEST]), GuestRoutes.authorize)
     this.router.get(this.PATHS.ID, GuestRoutes.getById)
     this.router.put(
@@ -118,9 +124,18 @@ class GuestRoutes implements IRouter {
     })
   }
 
+  private static async updateGuestEmail(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await GuestController.updateEmail(req.userId, req.body.email)
+      return ResponseHelper.successfulResponse(res, "Cập nhật thông tin khách hàng thành công!", HttpStatusCode.OK, {
+        data
+      })
+    })
+  }
+
   private static async getByPhoneNumber(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await GuestController.getByPhoneNumber(req.params.phoneNumber)
+      const { data } = await GuestController.getByEmailOrPhoneNumber(req.params.emailOrPhoneNumber)
       return ResponseHelper.successfulResponse(res, "Lấy thông tin khách hàng thành công!", HttpStatusCode.OK, { data })
     })
   }

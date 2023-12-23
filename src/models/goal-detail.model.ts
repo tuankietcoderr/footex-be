@@ -10,6 +10,10 @@ const GoalModel = new Schema<IGoalDetail>(
     scoreBy: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.GUESTS
+    },
+    team: {
+      type: Schema.Types.ObjectId,
+      ref: SCHEMA.TEAMS
     }
   },
   {

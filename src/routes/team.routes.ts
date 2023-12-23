@@ -13,8 +13,8 @@ class TeamRoutes implements IRouter {
     ID: `${this.path}/:id`,
     CAPTAIN: `${this.path}/captain`,
     GUEST: `${this.path}/guest/:id`,
-    LEAVE: `${this.path}/:teamId/leave`,
-    KICK: `${this.path}/:teamId/kick`
+    LEAVE: `${this.path}/:id/leave`,
+    KICK: `${this.path}/:id/kick`
   }
   constructor() {
     this.initializeRoutes()
@@ -39,6 +39,7 @@ class TeamRoutes implements IRouter {
     this.router.get(this.PATHS.GUEST, TeamRoutes.getGuestJointTeams)
     this.router.delete(this.PATHS.ID, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.deleteTeam)
     this.router.delete(this.PATHS.LEAVE, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.leaveTeam)
+    this.router.delete(this.PATHS.KICK, AuthMiddleware.verifyRoles([ERole.GUEST]), TeamRoutes.kickMember)
     this.router.get(this.PATHS.ID, TeamRoutes.getTeamById)
   }
 
@@ -74,7 +75,7 @@ class TeamRoutes implements IRouter {
 
   static async leaveTeam(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await TeamController.leave(req.params.teamId, req.body.memberId)
+      const { data } = await TeamController.leave(req.params.id, req.body.member)
       return ResponseHelper.successfulResponse(res, "Rời đội bóng thành công!", HttpStatusCode.OK, { data })
     })
   }
@@ -97,6 +98,15 @@ class TeamRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await TeamController.getGuestJointTeams(req.params.id)
       return ResponseHelper.successfulResponse(res, "Lấy danh sách đội bóng thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async kickMember(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await TeamController.kickMember(req.params.id, req.body.member)
+      return ResponseHelper.successfulResponse(res, "Kick thành viên khỏi đội bóng thành công!", HttpStatusCode.OK, {
+        data
+      })
     })
   }
 }

@@ -42,7 +42,7 @@ const TournamentModel = new Schema<ITournament>(
         ref: SCHEMA.TEAMS
       }
     ],
-    timelines: [
+    matches: [
       {
         type: Schema.Types.ObjectId,
         ref: SCHEMA.MATCHES

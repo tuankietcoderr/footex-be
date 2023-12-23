@@ -44,8 +44,8 @@ class FieldBookedQueueRoutes implements IRouter {
   static async createFieldBookedQueue(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await FieldBookedQueueController.create({
-        ...req.body,
-        bookedBy: req.userId
+        bookedBy: req.userId,
+        ...req.body
       })
       return ResponseHelper.successfulResponse(res, "Tạo lịch đặt sân thành công!", HttpStatusCode.CREATED, { data })
     })

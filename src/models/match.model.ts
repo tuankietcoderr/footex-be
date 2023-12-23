@@ -27,7 +27,25 @@ const MatchModel = new Schema<IMatch>(
     tournament: {
       type: Schema.Types.ObjectId,
       ref: SCHEMA.TOURNAMENTS
-    }
+    },
+    leftTeamGoals: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: SCHEMA.GOAL_DETAILS
+      }
+    ],
+    rightTeamGoals: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: SCHEMA.GOAL_DETAILS
+      }
+    ],
+    fines: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: SCHEMA.CARD_FINES
+      }
+    ]
   },
   {
     versionKey: false,

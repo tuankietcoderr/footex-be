@@ -26,6 +26,7 @@ class InvitementRoutes implements IRouter {
   private initializeRoutes(): void {
     this.router.post(
       this.PATHS.ROOT,
+      AuthMiddleware.verifyRoles([ERole.GUEST]),
       BodyFieldMiddleware.mustHaveFields<IInvitement>("to", "team"),
       BodyFieldMiddleware.doNotAllowFields<IInvitement>("from", "status", "isJoinRequest"),
       InvitementRoutes.invite

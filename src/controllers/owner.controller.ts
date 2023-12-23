@@ -67,6 +67,14 @@ class OwnerController extends BaseController {
     return await this.validate(id)
   }
 
+  static async getOwnerStatus(id: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const owner = await OwnerModel.findById(id)
+      if (!owner) return Promise.reject(new CustomError("Owner không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return { status: owner.status }
+    })
+  }
+
   static async sendVerifyEmail(email: string) {
     return await super.handleResponse(async () => {
       const owner = await OwnerModel.findOne({ email })

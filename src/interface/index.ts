@@ -8,8 +8,6 @@ import IOwner from "./owner/owner.interface"
 import ICardFine from "./tournaments/match/card-fine.interface"
 import IGoalDetail from "./tournaments/match/goal-detail.interface"
 import IMatch from "./tournaments/match/match.interface"
-import IMatchResult from "./tournaments/match/match-result.interface"
-import IMatchResultDetail from "./tournaments/match/match-result-detail.interface"
 import IPrize from "./tournaments/prize.interface"
 import ITournament from "./tournaments/tournament.interface"
 import ICredential from "./user/credential.interface"
@@ -30,8 +28,6 @@ export {
   ICardFine,
   IGoalDetail,
   IMatch,
-  IMatchResult,
-  IMatchResultDetail,
   IPrize,
   ITournament,
   ICredential,

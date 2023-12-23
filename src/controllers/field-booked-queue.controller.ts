@@ -1,7 +1,7 @@
 import { Types } from "mongoose"
 import { CustomError, HttpStatusCode } from "../helper"
 import { IBranch, IFieldBookedQueue } from "../interface"
-import { FieldBookedQueueModel, FieldModel } from "../models"
+import { FieldBookedQueueModel, FieldModel, GuestModel } from "../models"
 import BaseController from "./base.controller"
 import FieldController from "./field.controller"
 
@@ -20,8 +20,11 @@ class FieldBookedQueueController extends BaseController {
   }
 
   static async create(body: IFieldBookedQueue) {
+    console.log(body)
     return await super.handleResponse(async () => {
-      const { field, startAt, endAt } = body
+      const { field, startAt, endAt, bookedBy } = body
+      const guest = await GuestModel.findById(bookedBy)
+      if (!guest) return Promise.reject(new CustomError("Khách hàng không tồn tại", HttpStatusCode.BAD_REQUEST))
       if (startAt > endAt) {
         return Promise.reject(
           new CustomError("Ngày bắt đầu không được lớn hơn ngày kết thúc", HttpStatusCode.BAD_REQUEST)

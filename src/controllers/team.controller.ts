@@ -28,7 +28,14 @@ class TeamController extends BaseController {
             },
             {
               path: "jointTournaments",
-              select: "name"
+              select: "name startAt endAt status",
+              populate: [
+                { path: "prize", select: "name image winners value" },
+                {
+                  path: "branch",
+                  select: "district city ward houseNumber street"
+                }
+              ]
             },
             {
               path: "joinRequests",
@@ -178,8 +185,18 @@ class TeamController extends BaseController {
 
   static async addMember(id: string | Types.ObjectId, member: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const res = await TeamModel.findByIdAndUpdate(id, { $push: { members: member } }, { new: true })
-      if (!res) return Promise.reject(new CustomError("Team không tồn tại", HttpStatusCode.BAD_REQUEST))
+      const team = await TeamModel.findById(id)
+      if (!team) {
+        return Promise.reject(new CustomError("Team không tồn tại", HttpStatusCode.BAD_REQUEST))
+      }
+
+      for (const t of team.members) {
+        if (t.toString() === member) {
+          return Promise.reject(new CustomError("Thành viên đã ở trong đội bóng", HttpStatusCode.BAD_REQUEST))
+        }
+      }
+
+      const res = await team.updateOne({ $push: { members: member } }, { new: true })
       return res
     })
   }
@@ -202,16 +219,36 @@ class TeamController extends BaseController {
 
   static async getGuestJointTeams(guestId: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const teams = await TeamModel.find({
-        members: { $elemMatch: { $eq: guestId } }
-      })
+      const teams = await TeamModel.find(
+        {
+          members: { $elemMatch: { $eq: guestId } }
+        },
+        {},
+        {
+          populate: [
+            {
+              path: "captain",
+              select: "district city ward houseNumber street"
+            }
+          ]
+        }
+      )
       return teams
     })
   }
 
   static async getCaptainTeams(guestId: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const teams = await TeamModel.find({ captain: guestId })
+      const teams = await TeamModel.find(
+        { captain: guestId },
+        {},
+        {
+          populate: {
+            path: "members",
+            select: "name avatar"
+          }
+        }
+      )
       return teams
     })
   }

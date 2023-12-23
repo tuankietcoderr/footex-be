@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express"
 import jwt, { JwtPayload } from "jsonwebtoken"
-import { ERole } from "../enum"
+import { EOwnerStatus, ERole } from "../enum"
 import { HttpStatusCode, ResponseHelper } from "../helper"
+import { OwnerModel } from "../models"
 
 class AuthMiddleware {
   static verifyRoles(roles?: ERole[]) {

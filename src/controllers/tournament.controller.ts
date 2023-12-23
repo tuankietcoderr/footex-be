@@ -7,6 +7,7 @@ import BaseController from "./base.controller"
 import BranchController from "./branch.controller"
 import TeamController from "./team.controller"
 import { SCHEMA } from "../models/schema-name"
+import MatchController from "./match.controller"
 
 class TournamentController extends BaseController {
   constructor() {
@@ -58,7 +59,7 @@ class TournamentController extends BaseController {
         { status: ETournamentStatus.ONGOING },
         {
           description: 0,
-          timelines: 0
+          matches: 0
         },
         {
           populate: [
@@ -116,9 +117,15 @@ class TournamentController extends BaseController {
     return await super.handleResponse(async () => {
       const tournament = await TournamentModel.findById(id)
       if (!tournament) return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
-      const { data: team } = await TeamController.getById(teamId)
-      if (team.jointTournaments.find((item) => item.toString() === id.toString()))
-        return Promise.reject(new CustomError("Đội bóng đã tham gia giải đấu", HttpStatusCode.BAD_REQUEST))
+      const team = await TeamModel.findById(teamId)
+      if (!team) {
+        return Promise.reject(new CustomError("Đội bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
+      }
+      for (const t of team.jointTournaments) {
+        if (t.toString() === id) {
+          return Promise.reject(new CustomError("Đội bóng đã tham gia giải đấu", HttpStatusCode.BAD_REQUEST))
+        }
+      }
       await team.updateOne({ $push: { jointTournaments: id } })
       const jointTournament = await tournament.updateOne({ $push: { teams: team } })
       return jointTournament
@@ -128,8 +135,8 @@ class TournamentController extends BaseController {
   static async getTournamentMatches(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const { data: tournament } = await this.validate(id)
-      const { timelines } = tournament
-      return timelines
+      const { matches } = tournament
+      return matches
     })
   }
 
@@ -155,12 +162,27 @@ class TournamentController extends BaseController {
     })
   }
 
+  static async updateStatus(id: string | Types.ObjectId, status: ETournamentStatus) {
+    return await super.handleResponse(async () => {
+      const tournament = await TournamentModel.findById(id)
+      if (!tournament) return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
+      const newTournament = await tournament.updateOne({ $set: { status } }, { new: true })
+      return newTournament
+    })
+  }
+
   static async addToTimeline(id: string | Types.ObjectId, matchId: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const { data: tournament } = await this.validate(id)
-      const isExist = tournament.timelines.find((item) => item.toString() === matchId.toString())
-      if (isExist) return Promise.reject(new CustomError("Trận đấu đã tồn tại", HttpStatusCode.BAD_REQUEST))
-      const newTournament = await tournament.updateOne({ $push: { timelines: matchId } })
+      const tournament = await TournamentModel.findById(id)
+      if (!tournament) {
+        return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
+      }
+      for (const t of tournament.matches) {
+        if (t.toString() === matchId.toString()) {
+          return Promise.reject(new CustomError("Trận đấu đã tồn tại", HttpStatusCode.BAD_REQUEST))
+        }
+      }
+      const newTournament = await tournament.updateOne({ $push: { matches: matchId } })
       return newTournament
     })
   }
@@ -292,7 +314,82 @@ class TournamentController extends BaseController {
   }
 
   static async getById(id: string | Types.ObjectId) {
-    return await this.validate(id)
+    return await super.handleResponse(async () => {
+      const tournaments = await TournamentModel.findById(
+        id,
+        {},
+        {
+          populate: [
+            {
+              path: "prize",
+              select: "name image winners value"
+            },
+            {
+              path: "branch",
+              select: "logo name city district ward street"
+            },
+            {
+              path: "teams",
+              select: "members jointTournaments name captain logo",
+              populate: {
+                path: "captain",
+                select: "avatar name city district ward street"
+              }
+            },
+            {
+              path: "matches",
+              select: "leftTeam rightTeam startAt endAt field",
+              populate: [
+                {
+                  path: "leftTeam",
+                  select: "name logo"
+                },
+                {
+                  path: "rightTeam",
+                  select: "name logo"
+                },
+                {
+                  path: "field",
+                  select: "name"
+                },
+                {
+                  path: "leftTeamGoals",
+                  select: "scoreAtMinute scoreBy",
+                  populate: {
+                    path: "scoreBy",
+                    select: "name avatar"
+                  }
+                },
+                {
+                  path: "rightTeamGoals",
+                  select: "scoreAtMinute scoreBy",
+                  populate: {
+                    path: "scoreBy",
+                    select: "name avatar"
+                  }
+                },
+                {
+                  path: "fines",
+                  select: "cardType player",
+                  populate: {
+                    path: "player",
+                    select: "name avatar"
+                  }
+                },
+                {
+                  path: "fines",
+                  populate: {
+                    path: "player",
+                    select: "name avatar"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      )
+      return tournaments
+    })
   }
 
   static async getGuestJointTournament(id: string | Types.ObjectId) {
@@ -312,8 +409,7 @@ class TournamentController extends BaseController {
       const tournaments = await TournamentModel.find(
         { branch: branch_id },
         {
-          description: 0,
-          timelines: 0
+          matches: 0
         },
         {
           populate: [

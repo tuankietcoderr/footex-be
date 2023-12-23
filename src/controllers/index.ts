@@ -12,8 +12,6 @@ import TournamentController from "./tournament.controller"
 import RateController from "./rate.controller"
 import PrizeController from "./prize.controller"
 import MatchController from "./match.controller"
-import MatchResultController from "./match-result.controller"
-import MatchResultDetailController from "./match-result-detail.controller"
 import GoalDetailController from "./goal-detail.controller"
 import CardFineController from "./card-fine.controller"
 import ReportController from "./report.controller"
@@ -33,8 +31,6 @@ export {
   RateController,
   PrizeController,
   MatchController,
-  MatchResultController,
-  MatchResultDetailController,
   GoalDetailController,
   CardFineController,
   ReportController

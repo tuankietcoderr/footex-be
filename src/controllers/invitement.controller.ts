@@ -22,8 +22,16 @@ class InvitementController extends BaseController {
   static async invite(body: IInvitement) {
     return await super.handleResponse(async () => {
       const { from, to, team } = body
-      const invitementExist = await InvitementModel.findOne({ $and: [{ from }, { to }, { team }] })
-      if (invitementExist) return Promise.reject(new CustomError("Lời mời đã tồn tại", HttpStatusCode.BAD_REQUEST))
+      const _team = await TeamModel.findById(team)
+      if (!_team) {
+        return Promise.reject(new CustomError("Đội bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
+      }
+      for (const t of _team.members) {
+        if (t.toString() === to) {
+          return Promise.reject(new CustomError("Thành viên đã ở trong đội bóng", HttpStatusCode.BAD_REQUEST))
+        }
+      }
+
       const newInvitement = await InvitementModel.create(body)
       return newInvitement
     })
@@ -78,14 +86,52 @@ class InvitementController extends BaseController {
 
   static async getGuestInvitement(guestId: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const invitement = await InvitementModel.find({ to: guestId })
+      const invitement = await InvitementModel.find(
+        { to: guestId, isJoinRequest: false },
+        {},
+        {
+          populate: [
+            {
+              path: "from",
+              select: "name avatar"
+            },
+            {
+              path: "to",
+              select: "name avatar"
+            },
+            {
+              path: "team",
+              select: "name logo captain"
+            }
+          ]
+        }
+      )
       return invitement
     })
   }
 
   static async getTeamInvitement(teamId: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const invitement = await InvitementModel.find({ team: teamId })
+      const invitement = await InvitementModel.find(
+        { team: teamId, isJoinRequest: false },
+        {},
+        {
+          populate: [
+            {
+              path: "from",
+              select: "name avatar"
+            },
+            {
+              path: "to",
+              select: "name avatar"
+            },
+            {
+              path: "team",
+              select: "name logo captain"
+            }
+          ]
+        }
+      )
       return invitement
     })
   }
@@ -107,7 +153,7 @@ class InvitementController extends BaseController {
             },
             {
               path: "team",
-              select: "name logo"
+              select: "name logo captain"
             }
           ]
         }

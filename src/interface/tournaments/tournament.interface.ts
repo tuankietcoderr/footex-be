@@ -13,7 +13,7 @@ export default interface ITournament {
   endAt: Date
   branch: Types.ObjectId | string | IBranch
   teams: Types.ObjectId[] | string[] | ITeam[]
-  timelines: Types.ObjectId[] | string[] | IMatch[]
+  matches: Types.ObjectId[] | string[] | IMatch[]
   prize: Types.ObjectId | string | IPrize<ITeam>
   status: ETournamentStatus
 }

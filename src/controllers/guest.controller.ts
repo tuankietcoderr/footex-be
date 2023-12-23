@@ -89,6 +89,23 @@ class GuestController extends BaseController {
     })
   }
 
+  static async updateEmail(id: string | Types.ObjectId, email: string) {
+    return await super.handleResponse(async () => {
+      const guest = await GuestModel.findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            email,
+            isEmailVerified: false
+          }
+        },
+        { new: true }
+      )
+      if (!guest) return Promise.reject(new CustomError("Guest không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return guest
+    })
+  }
+
   static async sendVerifyEmail(email: string) {
     return await super.handleResponse(async () => {
       const guest = await GuestModel.findOne({ email })
@@ -150,9 +167,11 @@ class GuestController extends BaseController {
       return await GuestModel.find()
     })
   }
-  static async getByPhoneNumber(phoneNumber: string) {
+  static async getByEmailOrPhoneNumber(emailOrPhoneNumber: string) {
     return await super.handleResponse(async () => {
-      const guest = await GuestModel.findOne({ phoneNumber })
+      const guest = await GuestModel.findOne({
+        $or: [{ email: emailOrPhoneNumber }, { phoneNumber: emailOrPhoneNumber }]
+      })
       if (!guest) return Promise.reject(new CustomError("Khách hàng không tồn tại", HttpStatusCode.BAD_REQUEST))
       return guest
     })

@@ -7,8 +7,6 @@ import OwnerModel from "./owner.model"
 import TeamModel from "./team.model"
 import TournamentModel from "./tournament.model"
 import GuestModel from "./guest.model"
-import MatchResultModel from "./match-result.model"
-import MatchResultDetailModel from "./match-result-detail.model"
 import MatchModel from "./match.model"
 import GoalDetailModel from "./goal-detail.model"
 import PrizeModel from "./prize.model"
@@ -26,8 +24,6 @@ export {
   TeamModel,
   TournamentModel,
   GuestModel,
-  MatchResultModel,
-  MatchResultDetailModel,
   MatchModel,
   GoalDetailModel,
   PrizeModel,

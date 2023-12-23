@@ -12,8 +12,6 @@ import {
   GoalDetailRoutes,
   GuestRoutes,
   InvitementRoutes,
-  MatchResultDetailRoutes,
-  MatchResultRoutes,
   MatchRoutes,
   OwnerRoutes,
   PrizeRoutes,
@@ -36,8 +34,6 @@ const routes: IRouter[] = [
   new PrizeRoutes(),
   new RateRoutes(),
   new MatchRoutes(),
-  new MatchResultRoutes(),
-  new MatchResultDetailRoutes(),
   new GoalDetailRoutes(),
   new CardFineRoutes(),
   new ReportRoutes()

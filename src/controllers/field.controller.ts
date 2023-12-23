@@ -204,7 +204,8 @@ class FieldController extends BaseController {
           image: 1,
           status: 1,
           type: 1,
-          branch: 1
+          branch: 1,
+          description: 1
         },
         {
           populate: {
