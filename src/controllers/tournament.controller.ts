@@ -430,8 +430,16 @@ class TournamentController extends BaseController {
 
   static async delete(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
-      const tournament = await TournamentModel.findByIdAndDelete(id)
+      const tournament = await TournamentModel.findById(id)
       if (!tournament) return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
+      const teams = tournament.teams
+      for (const team of teams) {
+        const _team = await TeamModel.findById(team)
+        if (_team) {
+          await _team.updateOne({ $pull: { jointTournaments: id } })
+        }
+      }
+      await tournament.deleteOne()
       return tournament
     })
   }
