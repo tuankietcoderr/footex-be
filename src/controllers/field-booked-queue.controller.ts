@@ -117,10 +117,16 @@ class FieldBookedQueueController extends BaseController {
     return await super.handleResponse(async () => {
       await FieldController.validate(id)
       const fieldBookedQueue = await FieldBookedQueueModel.find({ field: id }, undefined, {
-        populate: {
-          path: "bookedBy",
-          select: "avatar name phoneNumber email"
-        }
+        populate: [
+          {
+            path: "bookedBy",
+            select: "avatar name phoneNumber email"
+          },
+          {
+            path: "field",
+            select: "price"
+          }
+        ]
       })
       return fieldBookedQueue
     })

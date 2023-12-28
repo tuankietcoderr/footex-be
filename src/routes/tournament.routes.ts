@@ -11,6 +11,7 @@ class TournamentRoutes implements IRouter {
   private readonly PATHS = {
     ROOT: this.path,
     ID: `${this.path}/:id`,
+    RANKING: `${this.path}/:id/ranking`,
     STATUS: `${this.path}/:id/status`,
     HAPPENING: `${this.path}/happening`,
     GUEST_JOINT: `${this.path}/joint`,
@@ -45,6 +46,7 @@ class TournamentRoutes implements IRouter {
     )
     this.router.get(this.PATHS.HAPPENING, TournamentRoutes.getHappeningTournaments)
     this.router.get(this.PATHS.ID, TournamentRoutes.getTournamentById)
+    this.router.get(this.PATHS.RANKING, TournamentRoutes.getTournamentRanking)
     this.router.post(this.PATHS.JOIN, AuthMiddleware.verifyRoles([ERole.GUEST]), TournamentRoutes.joinTournament)
     this.router.get(this.PATHS.BRANCH, TournamentRoutes.getBranchsTournaments)
     this.router.delete(this.PATHS.ID, AuthMiddleware.verifyRoles([ERole.OWNER]), TournamentRoutes.deleteTournament)
@@ -61,6 +63,13 @@ class TournamentRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       const { data } = await TournamentController.getById(req.params.id)
       return ResponseHelper.successfulResponse(res, "Lấy thông tin giải đấu thành công!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async getTournamentRanking(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await TournamentController.ranking(req.params.id)
+      return ResponseHelper.successfulResponse(res, "Lấy bảng xếp hạng thành công!", HttpStatusCode.OK, { data })
     })
   }
 

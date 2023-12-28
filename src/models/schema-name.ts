@@ -17,5 +17,6 @@ export const SCHEMA = {
   GOAL_DETAILS: "goal_details",
   CARD_FINES: "card_fines",
   PRIZES: "prizes",
-  REPORTS: "reports"
+  REPORTS: "reports",
+  INVOICES: "invoices"
 }

@@ -2,7 +2,7 @@ import { Types } from "mongoose"
 import { ETournamentStatus } from "../enum"
 import { CustomError, HttpStatusCode } from "../helper"
 import { ITournament } from "../interface"
-import { TeamModel, TournamentModel } from "../models"
+import { MatchModel, TeamModel, TournamentModel } from "../models"
 import BaseController from "./base.controller"
 import BranchController from "./branch.controller"
 import TeamController from "./team.controller"
@@ -441,6 +441,32 @@ class TournamentController extends BaseController {
       }
       await tournament.deleteOne()
       return tournament
+    })
+  }
+
+  static async ranking(id: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const tournament = await TournamentModel.findById(id)
+      if (!tournament) return Promise.reject(new CustomError("Giải đấu không tồn tại", HttpStatusCode.BAD_REQUEST))
+      const ranks = await MatchModel.aggregate([
+        {
+          $lookup: {
+            from: SCHEMA.TOURNAMENTS,
+            localField: "tournament",
+            foreignField: "_id",
+            as: "tournament"
+          }
+        },
+        {
+          $unwind: "$tournament"
+        },
+        {
+          $project: {
+            tournament: 0
+          }
+        }
+      ])
+      return ranks
     })
   }
 }

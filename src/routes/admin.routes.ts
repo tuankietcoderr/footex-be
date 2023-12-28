@@ -10,6 +10,8 @@ class AdminRoutes implements IRouter {
   readonly router: Router = Router()
 
   private readonly PATHS = {
+    ROOT: this.path,
+    LOGIN: `${this.path}/login`,
     MANAGE_OWNER: {
       ROOT: `${this.path}/owner`,
       STATUS: `${this.path}/owner/:ownerId/status`,
@@ -36,6 +38,11 @@ class AdminRoutes implements IRouter {
       ROOT: `${this.path}/branch`,
       BRANCH: `${this.path}/branch/:branchId`,
       STATUS: `${this.path}/branch/:branchId/status`
+    },
+    MANAGE_REPORT: {
+      ROOT: `${this.path}/report`,
+      REPORT: `${this.path}/report/:reportId`,
+      STATUS: `${this.path}/report/:reportId/status`
     }
   }
 
@@ -44,6 +51,7 @@ class AdminRoutes implements IRouter {
   }
 
   private initializeRoutes(): void {
+    this.router.post(this.PATHS.LOGIN, BodyFieldMiddleware.mustHaveFields("secretKey"), this.login)
     this.router.put(
       this.PATHS.MANAGE_OWNER.STATUS,
       AuthMiddleware.verifyRoles([ERole.ADMIN]),
@@ -51,29 +59,99 @@ class AdminRoutes implements IRouter {
       this.updateOwnerStatus
     )
     this.router.put(
-      this.PATHS.MANAGE_GUEST.GUEST,
+      this.PATHS.MANAGE_GUEST.STATUS,
       AuthMiddleware.verifyRoles([ERole.ADMIN]),
       BodyFieldMiddleware.mustHaveFields("status"),
       this.updateGuestStatus
     )
     this.router.put(
-      this.PATHS.MANAGE_FIELD.FIELD,
+      this.PATHS.MANAGE_FIELD.STATUS,
       AuthMiddleware.verifyRoles([ERole.ADMIN]),
       BodyFieldMiddleware.mustHaveFields("status"),
       this.updateFieldStatus
     )
     this.router.put(
-      this.PATHS.MANAGE_TEAM.TEAM,
+      this.PATHS.MANAGE_TEAM.STATUS,
       AuthMiddleware.verifyRoles([ERole.ADMIN]),
       BodyFieldMiddleware.mustHaveFields("status"),
       this.updateTeamStatus
     )
     this.router.put(
-      this.PATHS.MANAGE_BRANCH.BRANCH,
+      this.PATHS.MANAGE_BRANCH.STATUS,
       AuthMiddleware.verifyRoles([ERole.ADMIN]),
       BodyFieldMiddleware.mustHaveFields("status"),
       this.updateBranchStatus
     )
+    this.router.put(
+      this.PATHS.MANAGE_REPORT.STATUS,
+      AuthMiddleware.verifyRoles([ERole.ADMIN]),
+      BodyFieldMiddleware.mustHaveFields("status"),
+      this.updateReportStatus
+    )
+
+    this.router.get(this.PATHS.MANAGE_OWNER.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllOwner)
+    this.router.get(this.PATHS.MANAGE_FIELD.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllField)
+    this.router.get(this.PATHS.MANAGE_BRANCH.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllBranch)
+    this.router.get(this.PATHS.MANAGE_TEAM.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllTeam)
+    this.router.get(this.PATHS.MANAGE_GUEST.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllGuest)
+    this.router.get(this.PATHS.MANAGE_REPORT.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllReport)
+  }
+
+  private async login(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { secretKey } = req.body
+      const { data } = await AdminController.login(secretKey)
+      return ResponseHelper.successfulResponse(res, "Đăng nhập thành công!", HttpStatusCode.OK, data)
+    })
+  }
+
+  private async getAllOwner(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await AdminController.getAllOwner()
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách chủ nhà thành công!", HttpStatusCode.OK, data)
+    })
+  }
+
+  private async getAllField(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await AdminController.getAllField()
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách sân thành công!", HttpStatusCode.OK, data)
+    })
+  }
+
+  private async getAllBranch(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await AdminController.getAllBranch()
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách chi nhánh thành công!", HttpStatusCode.OK, data)
+    })
+  }
+
+  private async getAllTeam(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await AdminController.getAllTeam()
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách đội thành công!", HttpStatusCode.OK, data)
+    })
+  }
+
+  private async getAllGuest(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await AdminController.getAllGuest()
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách khách hàng thành công!", HttpStatusCode.OK, data)
+    })
+  }
+
+  private async getAllReport(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await AdminController.getAllReport()
+      return ResponseHelper.successfulResponse(res, "Lấy danh sách báo cáo thành công!", HttpStatusCode.OK, data)
+    })
+  }
+
+  private async updateReportStatus(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      await AdminController.updateReportStatus(req.params.reportId, req.body.status)
+      return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái thành công!", HttpStatusCode.OK)
+    })
   }
 
   private async updateOwnerStatus(req: Request, res: Response) {
@@ -85,28 +163,28 @@ class AdminRoutes implements IRouter {
 
   private async updateGuestStatus(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      await AdminController.updateGuestStatus(req.params.id, req.body.status)
+      await AdminController.updateGuestStatus(req.params.guestId, req.body.status)
       return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái thành công!", HttpStatusCode.OK)
     })
   }
 
   private async updateFieldStatus(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      await AdminController.updateFieldStatus(req.params.id, req.body.status)
+      await AdminController.updateFieldStatus(req.params.fieldId, req.body.status)
       return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái thành công!", HttpStatusCode.OK)
     })
   }
 
   private async updateBranchStatus(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      await AdminController.updateBranchStatus(req.params.id, req.body.status)
+      await AdminController.updateBranchStatus(req.params.branchId, req.body.status)
       return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái thành công!", HttpStatusCode.OK)
     })
   }
 
   private async updateTeamStatus(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      await AdminController.updateTeamStatus(req.params.id, req.body.status)
+      await AdminController.updateTeamStatus(req.params.teamId, req.body.status)
       return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái thành công!", HttpStatusCode.OK)
     })
   }

@@ -9,10 +9,26 @@ class BranchController extends BaseController {
   constructor() {
     super()
   }
+
+  static async normalGetAll() {
+    return await super.handleResponse(async () => {
+      const branches = await BranchModel.find(
+        {},
+        { description: 0 },
+        {
+          populate: {
+            path: "owner",
+            select: "name email phoneNumber"
+          }
+        }
+      )
+      return branches
+    })
+  }
+
   static async getAllBranches(queries?: any) {
     return await super.handleResponse(async () => {
       const { city, district, ward, keyword, openAt, closeAt } = queries
-      console.log({ queries })
       const queryKeys = Object.keys(queries)
       const keywordKeyIndex = queryKeys.indexOf("keyword")
       if (keywordKeyIndex !== -1) queryKeys.splice(keywordKeyIndex, 1)

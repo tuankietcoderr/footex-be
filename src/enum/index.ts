@@ -75,6 +75,12 @@ enum EReportStatus {
   REJECTED = "rejected"
 }
 
+enum EInvoiceStatus {
+  PENDING = "pending",
+  PAID = "paid",
+  CANCELLED = "cancelled"
+}
+
 export {
   ERole,
   EFieldStatus,
@@ -87,5 +93,6 @@ export {
   EGuestStatus,
   ECard,
   ETournamentStatus,
-  EReportStatus
+  EReportStatus,
+  EInvoiceStatus
 }

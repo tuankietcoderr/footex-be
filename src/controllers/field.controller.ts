@@ -29,6 +29,29 @@ class FieldController extends BaseController {
     })
   }
 
+  static async normalGetAll() {
+    return await super.handleResponse(async () => {
+      const fields = await FieldModel.find(
+        {},
+        {
+          name: 1,
+          price: 1,
+          image: 1,
+          status: 1,
+          type: 1,
+          branch: 1
+        },
+        {
+          populate: {
+            path: "branch",
+            select: "-description"
+          }
+        }
+      )
+      return fields
+    })
+  }
+
   static async getAll(queries?: any) {
     return await super.handleResponse(async () => {
       const { city, district, ward, status, type, price, keyword } = queries

@@ -13,6 +13,7 @@ import PrizeModel from "./prize.model"
 import RateModel from "./rate.model"
 import CardFineModel from "./card-fine.model"
 import ReportModel from "./report.model"
+import InvoiceModel from "./invoice.model"
 
 export {
   BranchModel,
@@ -29,5 +30,6 @@ export {
   PrizeModel,
   RateModel,
   CardFineModel,
-  ReportModel
+  ReportModel,
+  InvoiceModel
 }

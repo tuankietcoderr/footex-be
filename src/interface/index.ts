@@ -16,6 +16,7 @@ import IUser from "./user/user.interface"
 import IAddress from "./address.interface"
 import IRouter from "./router.interface"
 import IInvitement from "./user/invitement.interface"
+import IInvoice from "./invoice.interface"
 
 export {
   IAdmin,
@@ -35,5 +36,6 @@ export {
   IUser,
   IAddress,
   IRouter,
-  IInvitement
+  IInvitement,
+  IInvoice
 }

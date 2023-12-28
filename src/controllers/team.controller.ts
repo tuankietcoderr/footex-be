@@ -11,6 +11,29 @@ class TeamController extends BaseController {
     super()
   }
 
+  static async normalGetAll() {
+    return await super.handleResponse(async () => {
+      const teams = await TeamModel.find(
+        {},
+        {
+          createdAt: 0,
+          updatedAt: 0,
+          images: 0,
+          description: 0
+        },
+        {
+          populate: [
+            {
+              path: "captain",
+              select: "name"
+            }
+          ]
+        }
+      )
+      return teams
+    })
+  }
+
   static async validate(id: string | Types.ObjectId) {
     return await super.handleResponse(async () => {
       const team = await TeamModel.findById(

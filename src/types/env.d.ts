@@ -11,6 +11,7 @@ declare global {
       SMTP_PASSWORD: string
       URL: string
       APP_NAME: string
+      ADMIN_SECRET_KEY: string
     }
   }
 }

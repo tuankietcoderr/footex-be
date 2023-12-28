@@ -4,7 +4,7 @@ import ITeam from "./guest/team.interface"
 import IBranch from "./owner/branch.interface"
 import { EReportStatus } from "../enum"
 
-export default interface IReport<T = ITeam | IBranch> {
+export default interface IReport<T = ITeam | IBranch | IGuest> {
   reporter: Types.ObjectId | string | IGuest
   reported: Types.ObjectId | string | T
   reason: string

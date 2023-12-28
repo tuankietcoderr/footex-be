@@ -46,7 +46,7 @@ class ReportRoutes implements IRouter {
 
   private static async createReport(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await ReportController.create(req.body)
+      const { data } = await ReportController.create({ ...req.body, reporter: req.userId })
       return ResponseHelper.successfulResponse(res, "Tạo report thành công!", HttpStatusCode.CREATED, { data })
     })
   }

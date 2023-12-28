@@ -13,6 +13,12 @@ class GuestController extends BaseController {
     super()
   }
 
+  static async normalGetAll() {
+    return await super.handleResponse(async () => {
+      return await GuestModel.find()
+    })
+  }
+
   static async signUp(body: IGuest) {
     return await super.handleResponse(async () => {
       const { email, phoneNumber, password } = body

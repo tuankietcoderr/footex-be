@@ -15,7 +15,7 @@ const ReportModel = new Schema<IReport>(
     },
     refPath: {
       type: String,
-      enum: [SCHEMA.TEAMS, SCHEMA.BRANCHES]
+      enum: [SCHEMA.TEAMS, SCHEMA.BRANCHES, SCHEMA.GUESTS]
     },
     reason: {
       type: String,

@@ -12,6 +12,7 @@ import {
   GoalDetailRoutes,
   GuestRoutes,
   InvitementRoutes,
+  InvoiceRoutes,
   MatchRoutes,
   OwnerRoutes,
   PrizeRoutes,
@@ -36,7 +37,8 @@ const routes: IRouter[] = [
   new MatchRoutes(),
   new GoalDetailRoutes(),
   new CardFineRoutes(),
-  new ReportRoutes()
+  new ReportRoutes(),
+  new InvoiceRoutes()
 ]
 
 const app = new App(routes, Number(process.env.PORT || 2003))
