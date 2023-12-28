@@ -43,15 +43,15 @@ class TeamController extends BaseController {
           populate: [
             {
               path: "captain",
-              select: "district city ward houseNumber street name"
+              select: "district city ward houseNumber street name avatar"
             },
             {
               path: "members",
-              select: "district city ward houseNumber street name email phoneNumber"
+              select: "district city ward houseNumber street name email phoneNumber avatar"
             },
             {
               path: "jointTournaments",
-              select: "name startAt endAt status",
+              select: "name startAt endAt status images",
               populate: [
                 { path: "prize", select: "name image winners value" },
                 {

@@ -1,3 +1,4 @@
+import { EReportStatus } from "../enum"
 import { CustomError, HttpStatusCode } from "../helper"
 import emailContentProvider from "../mail/template"
 import { MailService } from "../service"
@@ -64,6 +65,45 @@ class MailController extends BaseController {
         })
       })
       return { hashedPassword }
+    })
+  }
+
+  static async sendChangePasswordEmail(email: string) {
+    return await super.handleResponse(async () => {
+      this._mailService.sendMail({
+        to: email as string,
+        subject: `[${this._appName}] Thay đổi mật khẩu thành công`,
+        html: emailContentProvider({
+          title: "Thay đổi mật khẩu thành công",
+          children: `
+          <p>Chào bạn,</p>
+          <p>Bạn đã thay đổi mật khẩu thành công.</p>
+          <p>Nếu bạn không thực hiện hành động này, vui lòng liên hệ với chúng tôi để được hỗ trợ.</p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ ${this._appName}</p>`
+        })
+      })
+      return { isSent: true }
+    })
+  }
+
+  static async sendObjectStatusEmail(email: string, object: string, status: string) {
+    return await super.handleResponse(async () => {
+      this._mailService.sendMail({
+        to: email as string,
+        subject: `[${this._appName}] Thông báo thay đổi trạng thái`,
+        html: emailContentProvider({
+          title: "Thông báo thay đổi trạng thái",
+          children: `
+          <p>Chào bạn,</p>
+          <p>Đây là email thông báo thay đổi trạng thái của bạn.</p>
+          <p>Đối tượng: <b>${object}</b></p>
+          <p>Trạng thái: <b>${status}</b></p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ ${this._appName}</p>`
+        })
+      })
+      return { isSent: true }
     })
   }
 }

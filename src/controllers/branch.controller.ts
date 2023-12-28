@@ -28,12 +28,10 @@ class BranchController extends BaseController {
 
   static async getAllBranches(queries?: any) {
     return await super.handleResponse(async () => {
-      const { city, district, ward, keyword, openAt, closeAt } = queries
+      const { city, district, ward, keyword } = queries
       const queryKeys = Object.keys(queries)
       const keywordKeyIndex = queryKeys.indexOf("keyword")
       if (keywordKeyIndex !== -1) queryKeys.splice(keywordKeyIndex, 1)
-      const open = parseInt(openAt ?? 0)
-      const close = parseInt(closeAt ?? 0)
 
       let branches = []
 
@@ -55,8 +53,6 @@ class BranchController extends BaseController {
           queryKeys.length > 0
             ? {
                 $and: [
-                  { openAt: { $lte: open } },
-                  { closeAt: { $gte: close } },
                   { status: EBranchStatus.ACTIVE },
                   { ...(city && { city: { $eq: city } }) },
                   { ...(district && { district: { $eq: district } }) },

@@ -35,7 +35,13 @@ const FieldModel = new Schema<IField>(
     },
     description: {
       type: String
-    }
+    },
+    saves: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: SCHEMA.GUESTS
+      }
+    ]
   },
   {
     timestamps: true,

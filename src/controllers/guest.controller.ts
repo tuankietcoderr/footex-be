@@ -159,12 +159,15 @@ class GuestController extends BaseController {
       if (!isMatch) return Promise.reject(new CustomError("Mật khẩu cũ không đúng", HttpStatusCode.BAD_REQUEST))
       const hashedPassword = await CredentialController.hash(newPassword)
       await CredentialController.updateCredential(id, hashedPassword)
+      await MailController.sendChangePasswordEmail(guest.email)
     })
   }
 
   static async updateStatus(_id: string | Types.ObjectId, status: EGuestStatus) {
     return await super.handleResponse(async () => {
-      return await GuestModel.updateOne({ _id }, { $set: { status } })
+      const guest = await GuestModel.findByIdAndUpdate(_id, { $set: { status } })
+      if (!guest) return Promise.reject(new CustomError("Guest không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return guest
     })
   }
 

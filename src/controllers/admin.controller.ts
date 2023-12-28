@@ -8,6 +8,8 @@ import FieldController from "./field.controller"
 import GuestController from "./guest.controller"
 import CredentialController from "./credential.controller"
 import ReportController from "./report.controller"
+import MailController from "./mail.controller"
+import { IGuest, IOwner } from "../interface"
 
 class AdminController extends BaseController {
   constructor() {
@@ -66,25 +68,35 @@ class AdminController extends BaseController {
 
   static async updateOwnerStatus(_id: string | Types.ObjectId, status: EOwnerStatus) {
     return await super.handleResponse(async () => {
-      await OwnerController.updateStatus(_id, status)
+      const {
+        data: { email }
+      } = await OwnerController.updateStatus(_id, status)
+      await MailController.sendObjectStatusEmail(email, "Chủ sân", status)
     })
   }
 
   static async updateGuestStatus(_id: string | Types.ObjectId, status: EGuestStatus) {
     return await super.handleResponse(async () => {
-      await GuestController.updateStatus(_id, status)
+      const {
+        data: { email }
+      } = await GuestController.updateStatus(_id, status)
+      await MailController.sendObjectStatusEmail(email, "Khách hàng", status)
     })
   }
 
   static async updateBranchStatus(id: string | Types.ObjectId, status: EBranchStatus) {
     return await super.handleResponse(async () => {
-      await BranchController.updateStatus(id, status)
+      const { data } = await BranchController.updateStatus(id, status)
+      const owner = (await data.populate("owner")) as IOwner
+      await MailController.sendObjectStatusEmail(owner.email, "Chi nhánh", status)
     })
   }
 
   static async updateTeamStatus(id: string | Types.ObjectId, status: ETeamStatus) {
     return await super.handleResponse(async () => {
-      await TeamController.updateStatus(id, status)
+      const { data } = await TeamController.updateStatus(id, status)
+      const captain = (await data.populate("captain")) as IGuest
+      await MailController.sendObjectStatusEmail(captain.email, "Đội bóng", status)
     })
   }
 

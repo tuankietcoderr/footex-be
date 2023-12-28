@@ -14,7 +14,10 @@ class FieldRoutes implements IRouter {
     ID: `${this.path}/:id`,
     BRANCH: `${this.path}/branch/:id`,
     NEAR_BY: `${this.path}/near-by/branch/:id`,
-    STATUS: `${this.path}/:id/status`
+    STATUS: `${this.path}/:id/status`,
+    SAVE: `${this.path}/save`,
+    SAVED: `${this.path}/saved/:userId`,
+    BOOKED: `${this.path}/booked/:userId`
   }
 
   constructor() {
@@ -23,9 +26,10 @@ class FieldRoutes implements IRouter {
 
   private initializeRoutes(): void {
     this.router.get(this.PATHS.ROOT, FieldRoutes.getAllFields)
-    this.router.get(this.PATHS.ID, FieldRoutes.getFieldById)
     this.router.get(this.PATHS.BRANCH, FieldRoutes.getBranchsField)
     this.router.get(this.PATHS.NEAR_BY, FieldRoutes.getNearByFields)
+    this.router.get(this.PATHS.SAVED, FieldRoutes.getSavedFields)
+    this.router.get(this.PATHS.BOOKED, FieldRoutes.getBookedFields)
     this.router.post(
       this.PATHS.ROOT,
       AuthMiddleware.verifyRoles([ERole.OWNER]),
@@ -39,6 +43,8 @@ class FieldRoutes implements IRouter {
       FieldRoutes.updateField
     )
     this.router.put(this.PATHS.STATUS, AuthMiddleware.verifyRoles([ERole.OWNER]), FieldRoutes.updateStatus)
+    this.router.post(this.PATHS.SAVE, AuthMiddleware.verifyRoles([ERole.GUEST]), FieldRoutes.saveField)
+    this.router.get(this.PATHS.ID, FieldRoutes.getFieldById)
   }
 
   static async getAllFields(req: Request, res: Response) {
@@ -88,6 +94,27 @@ class FieldRoutes implements IRouter {
       return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái sân bóng thành công!", HttpStatusCode.OK, {
         data
       })
+    })
+  }
+
+  static async saveField(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await FieldController.saveField(req.body.fieldId, req.userId)
+      return ResponseHelper.successfulResponse(res, "OK!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async getSavedFields(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await FieldController.getSavedFields(req.params.userId)
+      return ResponseHelper.successfulResponse(res, "OK!", HttpStatusCode.OK, { data })
+    })
+  }
+
+  static async getBookedFields(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      const { data } = await FieldController.getBookedFields(req.params.userId)
+      return ResponseHelper.successfulResponse(res, "OK!", HttpStatusCode.OK, { data })
     })
   }
 }

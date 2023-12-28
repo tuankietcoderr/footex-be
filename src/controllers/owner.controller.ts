@@ -65,7 +65,9 @@ class OwnerController extends BaseController {
 
   static async updateStatus(_id: string | Types.ObjectId, status: EOwnerStatus) {
     return await super.handleResponse(async () => {
-      return await OwnerModel.updateOne({ _id }, { $set: { status } })
+      const owner = await OwnerModel.findByIdAndUpdate(_id, { $set: { status } })
+      if (!owner) return Promise.reject(new CustomError("Owner không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return owner
     })
   }
 
@@ -105,7 +107,6 @@ class OwnerController extends BaseController {
 
   static async forgotPassword(email: string) {
     return await super.handleResponse(async () => {
-      console.log({ email })
       const owner = await OwnerModel.findOne({ email })
       if (!owner) return Promise.reject(new CustomError("Email không tồn tại", HttpStatusCode.BAD_REQUEST))
       if (!owner.isEmailVerified) {

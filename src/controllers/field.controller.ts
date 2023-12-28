@@ -6,6 +6,7 @@ import { BranchModel, FieldModel } from "../models"
 import BaseController from "./base.controller"
 import BranchController from "./branch.controller"
 import { SCHEMA } from "../models/schema-name"
+import fieldBookedQueueModel from "../models/field-booked-queue.model"
 
 class FieldController extends BaseController {
   constructor() {
@@ -76,7 +77,8 @@ class FieldController extends BaseController {
             image: 1,
             status: 1,
             type: 1,
-            branch: 1
+            branch: 1,
+            saves: 1
           },
           {
             populate: {
@@ -146,7 +148,8 @@ class FieldController extends BaseController {
               image: 1,
               status: 1,
               type: 1,
-              branch: 1
+              branch: 1,
+              saves: 1
             }
           }
         ])
@@ -261,6 +264,97 @@ class FieldController extends BaseController {
       const field = await FieldModel.findByIdAndUpdate(id, { $set: { status } }, { new: true, runValidators: true })
       if (!field) return Promise.reject(new CustomError("Sân bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
       return field
+    })
+  }
+
+  static async saveField(id: string | Types.ObjectId, userId: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const field = await FieldModel.findById(id)
+      if (!field) return Promise.reject(new CustomError("Sân bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
+      const isSaved = field.saves.map((s) => s.toString()).includes(userId.toString())
+      if (isSaved) {
+        await FieldModel.findByIdAndUpdate(id, { $pull: { saves: userId } })
+        return false
+      } else {
+        await FieldModel.findByIdAndUpdate(id, { $push: { saves: userId } })
+        return true
+      }
+    })
+  }
+
+  static async getSavedFields(userId: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const fields = await FieldModel.find(
+        { saves: { $elemMatch: { $eq: userId } } },
+        {
+          name: 1,
+          price: 1,
+          image: 1,
+          status: 1,
+          type: 1,
+          branch: 1,
+          saves: 1
+        },
+        {
+          populate: {
+            path: "branch",
+            select: "-description"
+          }
+        }
+      )
+      return fields
+    })
+  }
+
+  static async getBookedFields(userId: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const fields = await FieldModel.aggregate([
+        {
+          $lookup: {
+            from: SCHEMA.FIELD_BOOKED_QUEUES,
+            localField: "_id",
+            foreignField: "field",
+            as: "fieldBookedQueue"
+          }
+        },
+        {
+          $match: {
+            "fieldBookedQueue.bookedBy": new Types.ObjectId(userId)
+          }
+        },
+        {
+          $lookup: {
+            from: SCHEMA.BRANCHES,
+            localField: "branch",
+            foreignField: "_id",
+            as: "branch",
+            pipeline: [
+              {
+                $project: {
+                  ward: 1,
+                  district: 1,
+                  city: 1,
+                  houseNumber: 1,
+                  street: 1
+                }
+              }
+            ]
+          }
+        },
+        { $unwind: "$branch" },
+        {
+          $project: {
+            name: 1,
+            price: 1,
+            image: 1,
+            status: 1,
+            type: 1,
+            branch: 1,
+            saves: 1
+          }
+        }
+      ])
+      return fields
     })
   }
 }
