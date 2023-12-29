@@ -1,10 +1,11 @@
 import { Types } from "mongoose"
 import { CustomError, HttpStatusCode } from "../helper"
-import { IBranch, IFieldBookedQueue } from "../interface"
+import { IBranch, IFieldBookedQueue, IGuest, IOwner } from "../interface"
 import { FieldBookedQueueModel, FieldModel, GuestModel } from "../models"
 import BaseController from "./base.controller"
 import FieldController from "./field.controller"
 import { EFieldStatus } from "../enum"
+import MailController from "./mail.controller"
 
 class FieldBookedQueueController extends BaseController {
   constructor() {
@@ -21,7 +22,6 @@ class FieldBookedQueueController extends BaseController {
   }
 
   static async create(body: IFieldBookedQueue) {
-    console.log(body)
     return await super.handleResponse(async () => {
       const { field, startAt, endAt, bookedBy } = body
       const guest = await GuestModel.findById(bookedBy)
@@ -40,7 +40,14 @@ class FieldBookedQueueController extends BaseController {
       if (_field.status === EFieldStatus.DELETED || _field.status === EFieldStatus.MAINTAINING) {
         return Promise.reject(new CustomError("Sân hiện tại không thể đặt được", HttpStatusCode.BAD_REQUEST))
       }
-      const branch = (await _field.populate("branch")).branch as IBranch
+      const populate = await _field.populate({
+        path: "branch",
+        populate: {
+          path: "owner"
+        }
+      })
+      const branch = populate.branch as IBranch
+      const owner = branch.owner as IOwner
 
       const startAtTime = new Date(startAt).getHours()
       const endAtTime = new Date(endAt).getHours()
@@ -75,6 +82,8 @@ class FieldBookedQueueController extends BaseController {
 
       const fieldBookedQueue = await FieldBookedQueueModel.create(body)
       const populatedFieldBookedQueue = await fieldBookedQueue.populate("bookedBy")
+      MailController.sendBookedEmail(guest.email)
+      MailController.sendOwnerBookedEmail(owner.email, _field.name, branch.name)
       return populatedFieldBookedQueue
     })
   }

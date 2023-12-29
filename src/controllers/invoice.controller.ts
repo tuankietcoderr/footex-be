@@ -59,7 +59,8 @@ class InvoiceController extends BaseController {
                   name: 1,
                   price: 1,
                   type: 1,
-                  branch: 1
+                  branch: 1,
+                  image: 1
                 }
               }
             ]
@@ -80,14 +81,7 @@ class InvoiceController extends BaseController {
             from: SCHEMA.GUESTS,
             localField: "fieldBooked.bookedBy",
             foreignField: "_id",
-            as: "fieldBooked.bookedBy",
-            pipeline: [
-              {
-                $project: {
-                  name: 1
-                }
-              }
-            ]
+            as: "fieldBooked.bookedBy"
           }
         },
         { $unwind: "$fieldBooked.bookedBy" },

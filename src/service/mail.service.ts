@@ -4,7 +4,6 @@ class MailService {
   private _transporter: nodemailer.Transporter
 
   constructor() {
-    console.log("MailService constructor")
     this._transporter = this.initializeTransporter()
   }
 

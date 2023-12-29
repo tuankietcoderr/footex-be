@@ -1,5 +1,6 @@
 import { EReportStatus } from "../enum"
 import { CustomError, HttpStatusCode } from "../helper"
+import { IBranch, IField } from "../interface"
 import emailContentProvider from "../mail/template"
 import { MailService } from "../service"
 import BaseController from "./base.controller"
@@ -99,6 +100,42 @@ class MailController extends BaseController {
           <p>Đây là email thông báo thay đổi trạng thái.</p>
           <p>Đối tượng: <b>${object}</b></p>
           <p>Trạng thái: <b>${status}</b></p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ ${this._appName}</p>`
+        })
+      })
+      return { isSent: true }
+    })
+  }
+
+  static async sendBookedEmail(email: string) {
+    return await super.handleResponse(async () => {
+      this._mailService.sendMail({
+        to: email as string,
+        subject: `[${this._appName}] Thông báo đặt sân thành công`,
+        html: emailContentProvider({
+          title: "Thông báo đặt sân thành công",
+          children: `
+          <p>Chào bạn,</p>
+          <p>Đây là email thông báo đặt sân thành công.</p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ ${this._appName}</p>`
+        })
+      })
+      return { isSent: true }
+    })
+  }
+
+  static async sendOwnerBookedEmail(email: string, fieldName: string, branchName: string) {
+    return await super.handleResponse(async () => {
+      this._mailService.sendMail({
+        to: email as string,
+        subject: `[${this._appName}] Thông báo đặt sân`,
+        html: emailContentProvider({
+          title: "Thông báo đặt sân",
+          children: `
+          <p>Chào chủ sân,</p>
+          <p>Đây là email thông báo rằng có người đã đặt sân <b>${fieldName}</b> của chi nhánh <b>${branchName}</b>.</p>
           <p>Trân trọng,</p>
           <p>Đội ngũ ${this._appName}</p>`
         })
