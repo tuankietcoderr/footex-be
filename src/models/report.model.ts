@@ -25,6 +25,10 @@ const ReportModel = new Schema<IReport>(
       type: String,
       enum: Object.values(EReportStatus),
       default: EReportStatus.PENDING
+    },
+    title: {
+      type: String,
+      required: true
     }
   },
   {
