@@ -87,7 +87,7 @@ class AdminController extends BaseController {
   static async updateBranchStatus(id: string | Types.ObjectId, status: EBranchStatus) {
     return await super.handleResponse(async () => {
       const { data } = await BranchController.updateStatus(id, status)
-      const owner = (await data.populate("owner")) as IOwner
+      const owner = (await data.populate("owner")).owner as IOwner
       await MailController.sendObjectStatusEmail(owner.email, "Chi nhánh", status)
     })
   }
