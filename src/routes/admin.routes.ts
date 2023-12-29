@@ -95,6 +95,8 @@ class AdminRoutes implements IRouter {
     this.router.get(this.PATHS.MANAGE_TEAM.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllTeam)
     this.router.get(this.PATHS.MANAGE_GUEST.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllGuest)
     this.router.get(this.PATHS.MANAGE_REPORT.ROOT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.getAllReport)
+
+    this.router.delete(this.PATHS.MANAGE_REPORT.REPORT, AuthMiddleware.verifyRoles([ERole.ADMIN]), this.deleteReport)
   }
 
   private async login(req: Request, res: Response) {
@@ -186,6 +188,13 @@ class AdminRoutes implements IRouter {
     await ResponseHelper.wrapperHandler(res, async () => {
       await AdminController.updateTeamStatus(req.params.teamId, req.body.status)
       return ResponseHelper.successfulResponse(res, "Cập nhật trạng thái thành công!", HttpStatusCode.OK)
+    })
+  }
+
+  private async deleteReport(req: Request, res: Response) {
+    await ResponseHelper.wrapperHandler(res, async () => {
+      await AdminController.deleteReport(req.params.reportId)
+      return ResponseHelper.successfulResponse(res, "Xóa báo cáo thành công!", HttpStatusCode.OK)
     })
   }
 }

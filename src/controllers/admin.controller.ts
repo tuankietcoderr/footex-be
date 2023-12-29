@@ -105,6 +105,12 @@ class AdminController extends BaseController {
       await FieldController.updateStatus(id, status)
     })
   }
+
+  static async deleteReport(id: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      await ReportController.delete(id)
+    })
+  }
 }
 
 export default AdminController

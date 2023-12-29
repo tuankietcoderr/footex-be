@@ -63,6 +63,14 @@ class ReportController extends BaseController {
       return report
     })
   }
+
+  static async delete(id: string | Types.ObjectId) {
+    return await super.handleResponse(async () => {
+      const report = await ReportModel.findByIdAndDelete(id)
+      if (!report) return Promise.reject(new CustomError("Report không tồn tại", HttpStatusCode.BAD_REQUEST))
+      return report
+    })
+  }
 }
 
 export default ReportController
