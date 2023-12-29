@@ -75,7 +75,7 @@ class TeamRoutes implements IRouter {
 
   static async leaveTeam(req: Request, res: Response) {
     await ResponseHelper.wrapperHandler(res, async () => {
-      const { data } = await TeamController.leave(req.params.id, req.body.member)
+      const { data } = await TeamController.leave(req.params.id, req.userId)
       return ResponseHelper.successfulResponse(res, "Rời đội bóng thành công!", HttpStatusCode.OK, { data })
     })
   }

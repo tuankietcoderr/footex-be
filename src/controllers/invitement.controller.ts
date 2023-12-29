@@ -71,6 +71,15 @@ class InvitementController extends BaseController {
         const member = invitement.isJoinRequest ? invitement.from : invitement.to
         await TeamController.addMember(invitement.team as string, member as string)
         await TeamModel.findByIdAndUpdate(invitement.team, { $pull: { joinRequests: invitement._id } })
+      } else {
+        if (invitement.isJoinRequest) {
+          const team = await TeamModel.findByIdAndUpdate(invitement.team, {
+            $pull: {
+              joinRequests: invitement._id
+            }
+          })
+          if (!team) return Promise.reject(new CustomError("Đội bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
+        }
       }
 
       invitement.status = status
