@@ -96,7 +96,7 @@ class MailController extends BaseController {
           title: "Thông báo thay đổi trạng thái",
           children: `
           <p>Chào bạn,</p>
-          <p>Đây là email thông báo thay đổi trạng thái của bạn.</p>
+          <p>Đây là email thông báo thay đổi trạng thái.</p>
           <p>Đối tượng: <b>${object}</b></p>
           <p>Trạng thái: <b>${status}</b></p>
           <p>Trân trọng,</p>

@@ -4,6 +4,7 @@ import { IBranch, IFieldBookedQueue } from "../interface"
 import { FieldBookedQueueModel, FieldModel, GuestModel } from "../models"
 import BaseController from "./base.controller"
 import FieldController from "./field.controller"
+import { EFieldStatus } from "../enum"
 
 class FieldBookedQueueController extends BaseController {
   constructor() {
@@ -36,6 +37,9 @@ class FieldBookedQueueController extends BaseController {
         )
       }
       const { data: _field } = await FieldController.validate(field as string)
+      if (_field.status === EFieldStatus.DELETED || _field.status === EFieldStatus.MAINTAINING) {
+        return Promise.reject(new CustomError("Sân hiện tại không thể đặt được", HttpStatusCode.BAD_REQUEST))
+      }
       const branch = (await _field.populate("branch")).branch as IBranch
 
       const startAtTime = new Date(startAt).getHours()

@@ -1,12 +1,13 @@
 import { Types } from "mongoose"
-import { EFieldStatus } from "../enum"
+import { EFieldBookedQueueStatus, EFieldStatus } from "../enum"
 import { CustomError, HttpStatusCode } from "../helper"
-import { IAddress, IField } from "../interface"
-import { BranchModel, FieldModel } from "../models"
+import { IAddress, IField, IGuest } from "../interface"
+import { BranchModel, FieldBookedQueueModel, FieldModel } from "../models"
 import BaseController from "./base.controller"
 import BranchController from "./branch.controller"
 import { SCHEMA } from "../models/schema-name"
 import fieldBookedQueueModel from "../models/field-booked-queue.model"
+import MailController from "./mail.controller"
 
 class FieldController extends BaseController {
   constructor() {
@@ -263,6 +264,23 @@ class FieldController extends BaseController {
     return await super.handleResponse(async () => {
       const field = await FieldModel.findByIdAndUpdate(id, { $set: { status } }, { new: true, runValidators: true })
       if (!field) return Promise.reject(new CustomError("Sân bóng không tồn tại", HttpStatusCode.BAD_REQUEST))
+      if (status === EFieldStatus.MAINTAINING || status === EFieldStatus.DELETED) {
+        const bookedQueues = await FieldBookedQueueModel.find(
+          { field: id, status: EFieldBookedQueueStatus.PENDING },
+          {},
+          {
+            populate: {
+              path: "bookedBy"
+            }
+          }
+        )
+        if (bookedQueues) {
+          for (const bookedQueue of bookedQueues) {
+            const bookedBy = bookedQueue.bookedBy as IGuest
+            MailController.sendObjectStatusEmail(bookedBy.email, field.name, status)
+          }
+        }
+      }
       return field
     })
   }
